@@ -2,7 +2,9 @@ package hmda.persistence.processing
 
 import akka.actor.{ ActorRef, ActorSystem, Props }
 import hmda.model.fi.lar.LoanApplicationRegister
+import hmda.model.metrics.FilingSummaryStats
 import hmda.persistence.messages.CommonMessages.{ Command, Event, GetState }
+import hmda.persistence.messages.commands.filing.FilingCommands.GetFilingSummaryStats
 import hmda.persistence.messages.events.processing.CommonHmdaValidatorEvents.LarValidated
 import hmda.persistence.model.HmdaPersistentActor
 
@@ -49,6 +51,11 @@ class HmdaFiling(filingPeriod: String) extends HmdaPersistentActor {
         log.debug(s"Persisted: $e")
         updateState(e)
       }
+
+    case GetFilingSummaryStats =>
+      val totalSubmissions = state.filings.keys.size
+      val totalLars = state.filings.values.sum
+      sender() ! FilingSummaryStats(totalSubmissions, totalLars)
 
     case GetState =>
       sender() ! state

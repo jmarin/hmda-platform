@@ -7,4 +7,5 @@ object FilingCommands {
   case class CreateFiling(filing: Filing) extends Command
   case class UpdateFilingStatus(period: String, status: FilingStatus) extends Command
   case class GetFilingByPeriod(period: String) extends Command
+  case class GetFilingSummaryStats(period: String) extends Command
 }

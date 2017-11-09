@@ -265,3 +265,9 @@ lazy val publication = (project in file("publication"))
       libraryDependencies ++= akkaPersistenceDeps ++ Seq(akkaHttpJson)
     )
   ).dependsOn(query % "compile->compile;test->test")
+
+lazy val metrics = (project in file("metrics"))
+  .settings(hmdaBuildSettings: _*)
+  .settings(
+    libraryDependencies ++= commonDeps ++ akkaDeps
+  ).dependsOn(persistence % "compile->compile;test->test")
