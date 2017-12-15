@@ -11,7 +11,11 @@ import hmda.persistence.messages.events.institutions.InstitutionEvents.{ Institu
 import hmda.persistence.model.HmdaPersistentActor
 import hmda.persistence.model.institutions.InstitutionPersistenceState
 
+import scala.concurrent.duration._
+
 object InstitutionPersistence {
+
+  case object SaveState
 
   val name = "institutions"
 
@@ -23,6 +27,8 @@ object InstitutionPersistence {
 }
 
 class InstitutionPersistence extends HmdaPersistentActor {
+
+  context.system.scheduler.scheduleOnce(120.seconds, self, SaveState)
 
   val config = ConfigFactory.load()
 
@@ -86,6 +92,10 @@ class InstitutionPersistence extends HmdaPersistentActor {
 
     case GetState =>
       sender() ! state.institutions
+
+    case SaveState =>
+      println("SAVING STATE")
+      saveSnapshot(state)
 
     case Shutdown => context stop self
   }
