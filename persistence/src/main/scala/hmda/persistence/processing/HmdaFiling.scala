@@ -38,11 +38,9 @@ class HmdaFiling(filingPeriod: String) extends HmdaPersistentActor {
 
   var state = HmdaFilingState()
 
-  var counter = 0
-
   val config = ConfigFactory.load()
 
-  val snapshotCounter = config.getInt("hmda.journal.snapshot.counter")
+  val snapshotInterval = config.getInt("hmda.journal.snapshot.counter")
 
   override def updateState(event: Event): Unit = {
     state = state.updated(event)
@@ -53,14 +51,12 @@ class HmdaFiling(filingPeriod: String) extends HmdaPersistentActor {
   override def receiveCommand: Receive = super.receiveCommand orElse {
 
     case LarValidated(lar, submissionId) =>
-      if (counter > snapshotCounter) {
-        saveSnapshot(state)
-        counter = 0
-      }
       persist(LarValidated(lar, submissionId)) { e =>
-        counter += 1
         log.debug(s"Persisted: $e")
         updateState(e)
+        if (lastSequenceNr % snapshotInterval == 0 && lastSequenceNr != 0) {
+          saveSnapshot(state)
+        }
       }
 
     case GetState =>
