@@ -1,6 +1,8 @@
 package hmda.persistence.institutions
 
 import akka.actor.{ ActorRef, ActorSystem, Props }
+import akka.persistence.SnapshotOffer
+import com.typesafe.config.ConfigFactory
 import hmda.model.institution.Institution
 import hmda.persistence.institutions.InstitutionPersistence._
 import hmda.persistence.messages.CommonMessages._
@@ -22,6 +24,10 @@ object InstitutionPersistence {
 
 class InstitutionPersistence extends HmdaPersistentActor {
 
+  val config = ConfigFactory.load()
+
+  val snapshotInterval = config.getInt("hmda.journal.snapshot.counter")
+
   var state = InstitutionPersistenceState()
 
   override def updateState(event: Event): Unit = {
@@ -36,6 +42,7 @@ class InstitutionPersistence extends HmdaPersistentActor {
         persist(InstitutionCreated(i)) { e =>
           log.debug(s"Persisted: $i")
           updateState(e)
+          saveState()
           sender() ! Some(e.institution)
         }
       } else {
@@ -48,6 +55,7 @@ class InstitutionPersistence extends HmdaPersistentActor {
         persist(InstitutionModified(i)) { e =>
           log.debug(s"Modified: ${i.respondent.name}")
           updateState(e)
+          saveState()
           sender() ! Some(e.institution)
         }
       } else {
@@ -80,6 +88,20 @@ class InstitutionPersistence extends HmdaPersistentActor {
       sender() ! state.institutions
 
     case Shutdown => context stop self
+  }
+
+  private def saveState(): Unit = {
+    if (lastSequenceNr % snapshotInterval == 0 && lastSequenceNr != 0) {
+      saveSnapshot(state)
+    }
+  }
+
+  override def receiveRecover: Receive = {
+    case SnapshotOffer(_, s: InstitutionPersistenceState) =>
+      log.debug(s"Recovering state from snapshot for ${InstitutionPersistence.name}")
+      state = s
+    case event: Event =>
+      updateState(event)
   }
 
   private def extractDomain(email: String): String = {
