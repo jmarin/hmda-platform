@@ -3,6 +3,7 @@ package hmda.persistence.serialization.institutions
 import hmda.model.institution.InstitutionGenerators._
 import hmda.persistence.messages.commands.institutions.InstitutionCommands._
 import hmda.persistence.messages.events.institutions.InstitutionEvents.{ InstitutionCreated, InstitutionModified }
+import hmda.persistence.model.institutions.InstitutionPersistenceState
 import hmda.persistence.model.serialization.InstitutionCommands._
 import hmda.persistence.model.serialization.InstitutionEvents._
 import hmda.persistence.serialization.institutions.InstitutionProtobufConverter._
@@ -120,6 +121,14 @@ class InstitutionProtobufConverterSpec extends PropSpec with PropertyChecks with
     forAll(Gen.alphaStr) { domain =>
       val protobuf = findInstitutionByDomainToProtobuf(FindInstitutionByDomain(domain)).toByteArray
       findInstitutionByDomainFromProtobuf(FindInstitutionByDomainMessage.parseFrom(protobuf)) mustBe FindInstitutionByDomain(domain)
+    }
+  }
+
+  property("Institution Persistence State must serialize to protobuf and back") {
+    forAll(institutionNGen(100)) { institutions =>
+      val institutionSet = institutions.toSet
+      val protobuf = institutionPersistenceStateToProtobuf(InstitutionPersistenceState(institutionSet)).toByteArray
+      institutionPersistenceStateFromProtobuf(InstitutionPersistenceStateMessage.parseFrom(protobuf)).institutions mustBe institutionSet
     }
   }
 

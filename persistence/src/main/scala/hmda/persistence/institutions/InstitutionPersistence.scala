@@ -7,6 +7,7 @@ import hmda.persistence.messages.CommonMessages._
 import hmda.persistence.messages.commands.institutions.InstitutionCommands._
 import hmda.persistence.messages.events.institutions.InstitutionEvents.{ InstitutionCreated, InstitutionModified }
 import hmda.persistence.model.HmdaPersistentActor
+import hmda.persistence.model.institutions.InstitutionPersistenceState
 
 object InstitutionPersistence {
 
@@ -16,20 +17,6 @@ object InstitutionPersistence {
 
   def createInstitutions(system: ActorSystem): ActorRef = {
     system.actorOf(InstitutionPersistence.props.withDispatcher("persistence-dispatcher"), name)
-  }
-
-  case class InstitutionPersistenceState(institutions: Set[Institution] = Set.empty[Institution]) {
-    def updated(event: Event): InstitutionPersistenceState = {
-      event match {
-        case InstitutionCreated(i) =>
-          InstitutionPersistenceState(institutions + i)
-        case InstitutionModified(i) =>
-          val elem = institutions.find(x => x.id == i.id).getOrElse(Institution.empty)
-          val updated = (institutions - elem) + i
-          InstitutionPersistenceState(updated)
-
-      }
-    }
   }
 }
 

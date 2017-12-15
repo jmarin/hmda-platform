@@ -4,6 +4,7 @@ import akka.serialization.SerializerWithStringManifest
 import hmda.model.institution.Institution
 import hmda.persistence.messages.commands.institutions.InstitutionCommands._
 import hmda.persistence.messages.events.institutions.InstitutionEvents.{ InstitutionCreated, InstitutionModified }
+import hmda.persistence.model.institutions.InstitutionPersistenceState
 import hmda.persistence.model.serialization.InstitutionCommands._
 import hmda.persistence.model.serialization.InstitutionEvents._
 import hmda.persistence.serialization.institutions.InstitutionProtobufConverter._
@@ -22,6 +23,7 @@ class InstitutionProtobufSerializer extends SerializerWithStringManifest {
   final val InstitutionCreatedManifest = classOf[InstitutionCreated].getName
   final val InstitutionModifiedManifest = classOf[InstitutionModified].getName
   final val InstitutionManifest = classOf[Institution].getName
+  final val InstitutionPersistenceStateManifest = classOf[InstitutionPersistenceState].getName
 
   override def toBinary(o: AnyRef): Array[Byte] = o match {
     case cmd: CreateInstitution => createInstitutionToProtobuf(cmd).toByteArray
@@ -33,6 +35,7 @@ class InstitutionProtobufSerializer extends SerializerWithStringManifest {
     case evt: InstitutionCreated => institutionCreatedToProtobuf(evt).toByteArray
     case evt: InstitutionModified => institutionModifiedToProtobuf(evt).toByteArray
     case evt: Institution => institutionToProtobuf(evt).toByteArray
+    case msg: InstitutionPersistenceState => institutionPersistenceStateToProtobuf(msg).toByteArray
     case msg: Any => throw new RuntimeException(s"Cannot serialize this message: ${msg.toString}")
   }
 
@@ -55,6 +58,8 @@ class InstitutionProtobufSerializer extends SerializerWithStringManifest {
       institutionModifiedFromProtobuf(InstitutionModifiedMessage.parseFrom(bytes))
     case InstitutionManifest =>
       institutionFromProtobuf(InstitutionMessage.parseFrom(bytes))
+    case InstitutionPersistenceStateManifest =>
+      institutionPersistenceStateFromProtobuf(InstitutionPersistenceStateMessage.parseFrom(bytes))
     case msg: Any => throw new RuntimeException(s"Cannot deserialize this message: ${msg.toString}")
   }
 }
