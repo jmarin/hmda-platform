@@ -1,7 +1,7 @@
 package hmda.persistence.institutions
 
 import akka.actor.{ ActorRef, ActorSystem, Props }
-import akka.persistence.SnapshotOffer
+import akka.persistence.{ SaveSnapshotFailure, SaveSnapshotSuccess, SnapshotOffer }
 import com.typesafe.config.ConfigFactory
 import hmda.model.institution.Institution
 import hmda.persistence.institutions.InstitutionPersistence._
@@ -94,14 +94,22 @@ class InstitutionPersistence extends HmdaPersistentActor {
       sender() ! state.institutions
 
     case SaveState =>
-      println("SAVING STATE")
+      println("Sending SaveState message")
       saveSnapshot(state)
 
     case Shutdown => context stop self
+
+    case SaveSnapshotSuccess(metadata) =>
+      log.info(s"saved snapshot for ${metadata.persistenceId}")
+
+    case SaveSnapshotFailure(metadata, reason) =>
+      log.info(s"Could not save snapshot for ${metadata.persistenceId} because ${reason.getLocalizedMessage}")
   }
 
   private def saveState(): Unit = {
+    println(s"$lastSequenceNr, $snapshotInterval")
     if (lastSequenceNr % snapshotInterval == 0 && lastSequenceNr != 0) {
+      println("SAVING STATE")
       saveSnapshot(state)
     }
   }
