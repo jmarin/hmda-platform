@@ -1,9 +1,11 @@
 package hmda.validation
 
-import akka.actor.{ ActorRef, ActorSystem, Props }
+import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.persistence.SnapshotOffer
+import com.typesafe.config.ConfigFactory
 import hmda.census.model.Msa
 import hmda.model.fi.SubmissionId
-import hmda.persistence.messages.CommonMessages.{ Command, Event, GetState, Shutdown }
+import hmda.persistence.messages.CommonMessages.{Command, Event, GetState, Shutdown}
 import hmda.persistence.messages.events.validation.ValidationStatsEvents._
 import hmda.persistence.model.HmdaPersistentActor
 
@@ -106,6 +108,10 @@ object ValidationStats {
 class ValidationStats extends HmdaPersistentActor {
   import ValidationStats._
 
+  val config = ConfigFactory.load()
+
+  val snapshotInterval = config.getInt("hmda.journal.snapshot.counter")
+
   override def persistenceId: String = s"$name"
 
   var state = ValidationStatsState()
@@ -124,24 +130,28 @@ class ValidationStats extends HmdaPersistentActor {
       persist(SubmissionSubmittedTotalsAdded(total, id)) { e =>
         log.debug(s"Persisted: $e")
         updateState(e)
+        saveState()
       }
 
     case AddSubmissionMacroStats(id, total, q070, q070Sold, q071, q071Sold, q072, q072Sold, q075, q076) =>
       persist(SubmissionMacroStatsAdded(id, total, q070, q070Sold, q071, q071Sold, q072, q072Sold, q075, q076)) { e =>
         log.debug(s"Persisted: $e")
         updateState(e)
+        saveState()
       }
 
     case AddSubmissionTaxId(tax, id) =>
       persist(SubmissionTaxIdAdded(tax, id)) { e =>
         log.debug(s"Persisted: $e")
         updateState(e)
+        saveState()
       }
 
     case AddIrsStats(map, id) =>
       persist(IrsStatsAdded(map, id)) { e =>
         log.debug(s"Persisted: $e")
         updateState(e)
+        saveState()
       }
 
     case FindTotalSubmittedLars(id, period) =>
@@ -185,6 +195,21 @@ class ValidationStats extends HmdaPersistentActor {
 
     case Shutdown =>
       context stop self
+  }
+
+  override def receiveRecover: Receive = {
+    case SnapshotOffer(_, s: ValidationStatsState) =>
+      log.debug(s"Recovering state from snapshot for ${ValidationStats.name}")
+      state = s
+    case event: Event =>
+      updateState(event)
+  }
+
+
+  private def saveState(): Unit = {
+    if (lastSequenceNr % snapshotInterval == 0 && lastSequenceNr != 0) {
+      saveSnapshot(state)
+    }
   }
 
 }
