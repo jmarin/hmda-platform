@@ -4,6 +4,10 @@ import org.scalacheck.Gen
 
 object InstitutionGenerators {
 
+  implicit def institutionNGen(n: Int): Gen[List[Institution]] = {
+    Gen.listOfN(n, institutionGen)
+  }
+
   implicit def institutionGen: Gen[Institution] = {
     for {
       id <- Gen.alphaStr

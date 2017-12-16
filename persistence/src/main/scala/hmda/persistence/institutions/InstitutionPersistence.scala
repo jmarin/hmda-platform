@@ -1,12 +1,15 @@
 package hmda.persistence.institutions
 
 import akka.actor.{ ActorRef, ActorSystem, Props }
+import akka.persistence.SnapshotOffer
+import com.typesafe.config.ConfigFactory
 import hmda.model.institution.Institution
 import hmda.persistence.institutions.InstitutionPersistence._
 import hmda.persistence.messages.CommonMessages._
 import hmda.persistence.messages.commands.institutions.InstitutionCommands._
 import hmda.persistence.messages.events.institutions.InstitutionEvents.{ InstitutionCreated, InstitutionModified }
 import hmda.persistence.model.HmdaPersistentActor
+import hmda.persistence.model.institutions.InstitutionPersistenceState
 
 object InstitutionPersistence {
 
@@ -17,23 +20,13 @@ object InstitutionPersistence {
   def createInstitutions(system: ActorSystem): ActorRef = {
     system.actorOf(InstitutionPersistence.props.withDispatcher("persistence-dispatcher"), name)
   }
-
-  case class InstitutionPersistenceState(institutions: Set[Institution] = Set.empty[Institution]) {
-    def updated(event: Event): InstitutionPersistenceState = {
-      event match {
-        case InstitutionCreated(i) =>
-          InstitutionPersistenceState(institutions + i)
-        case InstitutionModified(i) =>
-          val elem = institutions.find(x => x.id == i.id).getOrElse(Institution.empty)
-          val updated = (institutions - elem) + i
-          InstitutionPersistenceState(updated)
-
-      }
-    }
-  }
 }
 
 class InstitutionPersistence extends HmdaPersistentActor {
+
+  val config = ConfigFactory.load()
+
+  val snapshotInterval = config.getInt("hmda.journal.snapshot.counter")
 
   var state = InstitutionPersistenceState()
 
@@ -49,6 +42,7 @@ class InstitutionPersistence extends HmdaPersistentActor {
         persist(InstitutionCreated(i)) { e =>
           log.debug(s"Persisted: $i")
           updateState(e)
+          saveState()
           sender() ! Some(e.institution)
         }
       } else {
@@ -61,6 +55,7 @@ class InstitutionPersistence extends HmdaPersistentActor {
         persist(InstitutionModified(i)) { e =>
           log.debug(s"Modified: ${i.respondent.name}")
           updateState(e)
+          saveState()
           sender() ! Some(e.institution)
         }
       } else {
@@ -93,6 +88,20 @@ class InstitutionPersistence extends HmdaPersistentActor {
       sender() ! state.institutions
 
     case Shutdown => context stop self
+  }
+
+  private def saveState(): Unit = {
+    if (lastSequenceNr % snapshotInterval == 0 && lastSequenceNr != 0) {
+      saveSnapshot(state)
+    }
+  }
+
+  override def receiveRecover: Receive = {
+    case SnapshotOffer(_, s: InstitutionPersistenceState) =>
+      log.debug(s"Recovering state from snapshot for ${InstitutionPersistence.name}")
+      state = s
+    case event: Event =>
+      updateState(event)
   }
 
   private def extractDomain(email: String): String = {

@@ -3,6 +3,7 @@ package hmda.persistence.serialization.institutions
 import hmda.model.institution.InstitutionGenerators._
 import hmda.persistence.messages.commands.institutions.InstitutionCommands._
 import hmda.persistence.messages.events.institutions.InstitutionEvents.{ InstitutionCreated, InstitutionModified }
+import hmda.persistence.model.institutions.InstitutionPersistenceState
 import org.scalacheck.Gen
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{ MustMatchers, PropSpec }
@@ -81,4 +82,14 @@ class InstitutionProtobufSerializerSpec extends PropSpec with PropertyChecks wit
       serializer.fromBinary(bytes, serializer.ModifyInstitutionManifest) mustBe ModifyInstitution(institution)
     }
   }
+
+  property("Institution Persistence State messages must be serialized to binary and back") {
+    forAll(institutionNGen(100)) { institutions =>
+      val institutionSet = institutions.toSet
+      val msg = InstitutionPersistenceState(institutionSet)
+      val bytes = serializer.toBinary(msg)
+      serializer.fromBinary(bytes, serializer.InstitutionPersistenceStateManifest) mustBe msg
+    }
+  }
+
 }

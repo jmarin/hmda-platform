@@ -5,9 +5,20 @@ import hmda.model.institution._
 import hmda.persistence.messages.events.institutions.InstitutionEvents.{ InstitutionCreated, InstitutionModified }
 import hmda.persistence.model.serialization.InstitutionEvents._
 import hmda.persistence.messages.commands.institutions.InstitutionCommands._
+import hmda.persistence.model.institutions.InstitutionPersistenceState
 import hmda.persistence.model.serialization.InstitutionCommands._
 
 object InstitutionProtobufConverter {
+
+  def institutionPersistenceStateToProtobuf(obj: InstitutionPersistenceState): InstitutionPersistenceStateMessage = {
+    val xs = obj.institutions.map(i => institutionToProtobuf(i))
+    InstitutionPersistenceStateMessage(xs.toSeq)
+  }
+
+  def institutionPersistenceStateFromProtobuf(msg: InstitutionPersistenceStateMessage): InstitutionPersistenceState = {
+    val xs = msg.institutions.map(m => institutionFromProtobuf(m))
+    InstitutionPersistenceState(xs.toSet)
+  }
 
   def createInstitutionToProtobuf(cmd: CreateInstitution): CreateInstitutionMessage = {
     CreateInstitutionMessage(
