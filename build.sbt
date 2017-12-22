@@ -8,6 +8,7 @@ lazy val hmda = (project in file("."))
   .settings(hmdaBuildSettings: _*)
   .settings(
     Seq(
+      assemblyJarName in assembly := { s"${name.value}.jar" },
       libraryDependencies ++= Seq(
         scalaTest,
         scalaCheck,

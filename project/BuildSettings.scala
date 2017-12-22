@@ -1,6 +1,8 @@
 import sbt.Keys._
 import sbt._
 
+import sbtassembly.AssemblyPlugin.autoImport._
+
 object BuildSettings {
   val buildOrganization = "cfpb"
   val buildVersion      = "2.0.0"
@@ -16,6 +18,7 @@ object BuildSettings {
         "-deprecation",
         "-unchecked",
         "-feature"),
+      aggregate in assembly := false,
       parallelExecution in Test := true,
       testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oC")
     )
