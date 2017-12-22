@@ -94,6 +94,7 @@ class SubmissionLarStats(submissionId: SubmissionId) extends HmdaPersistentActor
       totalSubmittedLars = totalSubmittedLars + 1
 
     case LarValidated(lar, _) =>
+      log.debug(lar.toCSV)
       totalValidatedLars = totalValidatedLars + 1
       tallyQ070Lar(lar)
       tallyQ071Lar(lar)
