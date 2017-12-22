@@ -1,4 +1,4 @@
-package hmda.model.fi
+package hmda.model.filing
 
 trait HmdaFileRow {
 

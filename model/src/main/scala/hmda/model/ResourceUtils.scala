@@ -18,7 +18,8 @@ trait ResourceUtils {
     Source.fromInputStream(file, encoding)
   }
 
-  def resourceLines(filename: String, encoding: String = "UTF-8"): Iterable[String] = {
+  def resourceLines(filename: String,
+                    encoding: String = "UTF-8"): Iterable[String] = {
     using(resource(filename, encoding)) { source =>
       source.getLines().toList
     }
