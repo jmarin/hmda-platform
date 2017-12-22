@@ -7,8 +7,8 @@ sealed trait Agency {
 }
 
 object Agency {
-  def fromValue(value: Int): Agency = {
-    value match {
+  def valueOf(code: Int): Agency = {
+    code match {
       case 1 => OCC
       case 2 => FRS
       case 3 => FDIC
