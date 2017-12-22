@@ -1,7 +1,7 @@
 package hmda.model
 
+import scala.io.{BufferedSource, Source}
 import scala.language.reflectiveCalls
-import scala.io.{ BufferedSource, Source }
 
 trait ResourceUtils {
 

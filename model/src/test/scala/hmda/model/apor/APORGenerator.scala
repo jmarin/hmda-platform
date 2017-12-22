@@ -2,8 +2,6 @@ package hmda.model.apor
 
 import java.time.LocalDate
 
-import org.scalacheck.Gen
-
 object APORGenerator {
 
   implicit def APORGen: Gen[APOR] = {
