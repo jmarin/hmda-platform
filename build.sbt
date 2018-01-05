@@ -3,13 +3,15 @@ import BuildSettings._
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
 
 lazy val commonDeps = Seq(logback, scalaTest, scalaCheck)
+lazy val akkaDeps = Seq(akkaCluster, akkaTyped)
+lazy val akkaPersistenceDeps = Seq(akkaPersistence, akkaClusterSharding)
 
 lazy val hmda = (project in file("."))
   .enablePlugins(JavaServerAppPackaging, DockerPlugin, AshScriptPlugin)
   .settings(hmdaBuildSettings: _*)
   .settings(
     Seq(
-      mainClass in Compile := Some("hmda.model.Main"),
+      mainClass in Compile := Some("hmda.cluster.HmdaPlatform"),
       assemblyJarName in assembly := {
         s"${name.value}2.jar"
       }
@@ -28,15 +30,65 @@ lazy val hmda = (project in file("."))
       // add the fat jar
       filtered :+ (fatJar -> ("lib/" + fatJar.getName))
     },
-    //dockerBaseImage := "openjdk:9.0.1-11-jre-slim",
     dockerBaseImage := "openjdk:8-jre-alpine",
     // the bash scripts classpath only needs the fat jar
     scriptClasspath := Seq((assemblyJarName in assembly).value)
   )
-  .dependsOn(model)
+  .dependsOn(cluster)
+  .aggregate(
+    model,
+    parser,
+    persistence,
+    api,
+    cluster
+  )
 
 lazy val model = (project in file("model"))
   .settings(hmdaBuildSettings: _*)
   .settings(
-    libraryDependencies ++= commonDeps
+    libraryDependencies ++= commonDeps ++ akkaDeps
   )
+
+lazy val parser = (project in file("parser"))
+  .settings(hmdaBuildSettings: _*)
+  .dependsOn(model)
+
+lazy val persistence = (project in file("persistence"))
+  .settings(hmdaBuildSettings: _*)
+  .settings(
+    libraryDependencies ++= commonDeps ++ akkaDeps ++ akkaPersistenceDeps
+  )
+  .dependsOn(model)
+
+lazy val validation = (project in file("validation"))
+  .settings(hmdaBuildSettings: _*)
+  .settings(
+    libraryDependencies ++= commonDeps ++ akkaDeps
+  )
+  .dependsOn(model)
+
+lazy val query = (project in file("query"))
+  .settings(hmdaBuildSettings: _*)
+  .settings(
+    libraryDependencies ++= commonDeps ++ akkaDeps
+  )
+  .dependsOn(model)
+
+lazy val publication = (project in file("publication"))
+  .settings(hmdaBuildSettings: _*)
+  .settings(
+    libraryDependencies ++= commonDeps ++ akkaDeps
+  )
+  .dependsOn(model)
+
+lazy val api = (project in file("api"))
+  .settings(hmdaBuildSettings: _*)
+  .dependsOn(model)
+
+lazy val cluster = (project in file("cluster"))
+  .settings(hmdaBuildSettings: _*)
+  .dependsOn(persistence)
+  .dependsOn(validation)
+  .dependsOn(query)
+  .dependsOn(publication)
+  .dependsOn(api)
