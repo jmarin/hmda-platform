@@ -11,8 +11,10 @@ language: scala
 scala: 2.12.4
 
 jdk:
-- oraclejdk8
 - oraclejdk9
+- openjdk9
+- oraclejdk8
+
 
 script: 
   - sbt ++$TRAVIS_SCALA_VERSION clean coverage test assembly
