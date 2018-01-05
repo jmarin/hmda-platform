@@ -5,7 +5,7 @@ import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
 lazy val commonDeps = Seq(logback, scalaTest, scalaCheck)
 
 lazy val hmda = (project in file("."))
-  .enablePlugins(JavaServerAppPackaging, DockerPlugin)
+  .enablePlugins(JavaServerAppPackaging, DockerPlugin, AshScriptPlugin)
   .settings(hmdaBuildSettings: _*)
   .settings(
     Seq(
@@ -28,7 +28,8 @@ lazy val hmda = (project in file("."))
       // add the fat jar
       filtered :+ (fatJar -> ("lib/" + fatJar.getName))
     },
-    dockerBaseImage := "openjdk:9.0.1-11-jre-slim",
+    //dockerBaseImage := "openjdk:9.0.1-11-jre-slim",
+    dockerBaseImage := "openjdk:8-jre-alpine",
     // the bash scripts classpath only needs the fat jar
     scriptClasspath := Seq((assemblyJarName in assembly).value)
   )
