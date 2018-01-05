@@ -28,6 +28,7 @@ lazy val hmda = (project in file("."))
       // add the fat jar
       filtered :+ (fatJar -> ("lib/" + fatJar.getName))
     },
+    dockerBaseImage := "openjdk:9.0.1-11-jre-slim",
     // the bash scripts classpath only needs the fat jar
     scriptClasspath := Seq((assemblyJarName in assembly).value)
   )
