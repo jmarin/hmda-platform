@@ -3,7 +3,13 @@ import BuildSettings._
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
 
 lazy val commonDeps = Seq(logback, scalaTest, scalaCheck)
-lazy val akkaDeps = Seq(akkaSlf4J, akkaCluster, akkaTyped)
+lazy val akkaDeps = Seq(akkaSlf4J,
+                        akkaCluster,
+                        akkaTyped,
+                        akkaManagement,
+                        akkaManagementClusterBootstrap,
+                        akkaServiceDiscoveryDNS,
+                        akkaClusterHttpManagement)
 lazy val akkaPersistenceDeps = Seq(akkaPersistence, akkaClusterSharding)
 
 lazy val hmda = (project in file("."))
