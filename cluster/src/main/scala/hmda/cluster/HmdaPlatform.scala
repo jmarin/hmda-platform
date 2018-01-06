@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.cluster.Cluster
 import com.typesafe.config.ConfigFactory
 import hmda.persistence.HmdaPersistence
+import hmda.query.HmdaQuery
 import org.slf4j.LoggerFactory
 
 object HmdaPlatform extends App {
@@ -12,6 +13,7 @@ object HmdaPlatform extends App {
 
   log.info(
     """
+      |
       | #     # #     # ######     #       ######                                                     #     #  #####
       | #     # ##   ## #     #   # #      #     # #        ##   ##### ######  ####  #####  #    #    #     # #     #
       | #     # # # # # #     #  #   #     #     # #       #  #    #   #      #    # #    # ##  ##    #     #       #
@@ -19,6 +21,7 @@ object HmdaPlatform extends App {
       | #     # #     # #     # #######    #       #      ######   #   #      #    # #####  #    #     #   #  #
       | #     # #     # #     # #     #    #       #      #    #   #   #      #    # #   #  #    #      # #   #
       | #     # #     # ######  #     #    #       ###### #    #   #   #       ####  #    # #    #       #    #######|
+      |
       |
       """.stripMargin
   )
@@ -35,8 +38,13 @@ object HmdaPlatform extends App {
   val cluster = Cluster(system)
 
   //Start Persistence
-  if (cluster.selfRoles.contains("persistence")) {
+  if (cluster.selfRoles.contains(HmdaClusterRoles.persistence)) {
     system.actorOf(HmdaPersistence.props, HmdaPersistence.name)
+  }
+
+  //Start Query
+  if (cluster.selfRoles.contains(HmdaClusterRoles.query)) {
+    system.actorOf(HmdaQuery.props, HmdaQuery.name)
   }
 
 }
