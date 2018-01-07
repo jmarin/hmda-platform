@@ -4,7 +4,7 @@ import akka.actor.Props
 import hmda.model.actor.HmdaActor
 
 object HmdaPersistence {
-  val name = "HmdaPersistence"
+  final val name = "HmdaPersistence"
   def props: Props = Props(new HmdaPersistence)
 }
 class HmdaPersistence extends HmdaActor {

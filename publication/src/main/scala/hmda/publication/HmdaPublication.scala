@@ -4,7 +4,7 @@ import akka.actor.Props
 import hmda.model.actor.HmdaActor
 
 object HmdaPublication {
-  val name = "HmdaPublication"
+  final val name = "HmdaPublication"
   def props: Props = Props(new HmdaPublication)
 }
 
