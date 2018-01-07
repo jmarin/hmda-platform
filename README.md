@@ -18,7 +18,7 @@ The HMDA Platform uses sbt's multi-project builds, each project representing a s
 application that can be deployed on a single node or as a distributed application. For more information on how Akka Cluster
 is used, see the documentation [here](Documents/cluster.md)
 
-
+## Dependencies
 
 ### Java 9 SDK
 
@@ -31,6 +31,53 @@ The HMDA Platform should also run on JDK 8.
 The HMDA Platform is written in [Scala](http://www.scala-lang.org/). To build it, you will need to [download](http://www.scala-lang.org/download/) and [install](http://www.scala-lang.org/download/install.html) Scala 2.12.x
 
 In addition, you'll need Scala's interactive build tool [sbt](https://www.scala-sbt.org/). Please refer to sbt's [installation instructions](https://www.scala-sbt.org/1.x/docs/Setup.html) to get started.
+
+## Building and Running
+
+### Building the .jar
+
+* To build JVM artifacts (the default, includes all projects), from the sbt prompt:
+
+```shell
+> clean assembly
+```
+This task will create a `fat jar`, which can be executed on any `JDK9` compliant `JVM`:
+
+`java -jar target/scala-2.12/hmda2.jar`
+
+### Building the Docker image
+
+* To build a `Docker` image that runs as a single node cluster, from the sbt prompt:
+
+```shell
+> docker:publishLocal
+```
+This task will create a `Docker` image. To run a container with the `HMDA Platform` as a single node cluster, will all dependencies:
+
+`docker run --rm -ti -p 19999:19999 jmarin/hmda`
+
+### Running as a local cluster
+
+The application can be run as a distributed cluster on a local machine, by running it on separate `JVM` processes.
+The following example starts 2 instances of the application that work as a cluster, with roles `persistence` and `health`:
+
+* First node, acts as seed node and has role `persistence`. From a terminal window:
+
+```shell
+export HMDA_RUNTIME_MODE=prod
+export HMDA_CLUSTER_ROLES=persistence
+java -Dakka.cluster.seed-nodes.0=akka://hmda@127.0.0.1:2551 -jar target/scala-2.12/hmda2.jar
+```
+
+
+* Second node, joins the cluster through the previous seed node and has role `health`. From a separate terminal window:
+
+```shell
+export HMDA_RUNTIME_MODE=prod
+export APP_PORT=0
+export HMDA_CLUSTER_ROLES=health
+java -Dakka.cluster.seed-nodes.0=akka://hmda@127.0.0.1:2551 -jar target/scala-2.12/hmda2.jar
+```
 
 ## Contributing
 
