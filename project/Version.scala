@@ -4,6 +4,7 @@ object Version {
   val scalaTest  = "3.0.1"
   val scalaCheck = "1.13.4"
   val akka = "2.5.8"
+  val akkaHttp = "10.1.0-RC1"
   val akkaClusterManagement = "0.8.0"
 
 }

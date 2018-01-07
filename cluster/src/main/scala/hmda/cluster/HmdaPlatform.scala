@@ -70,7 +70,6 @@ object HmdaPlatform extends App {
 
   //Start Persistence
   if (cluster.selfRoles.contains(HmdaClusterRoles.persistence)) {
-
     system.actorOf(HmdaPersistence.props, HmdaPersistence.name)
   }
 
@@ -87,6 +86,8 @@ object HmdaPlatform extends App {
   //Start Health
   if (cluster.selfRoles.contains(HmdaClusterRoles.health)) {
     system.actorOf(HmdaHealth.props, HmdaHealth.name)
+    if (runtimeMode == "dev")
+      AkkaManagement(system).start()
   }
 
   //Start API

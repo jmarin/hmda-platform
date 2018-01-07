@@ -6,11 +6,13 @@ lazy val commonDeps = Seq(logback, scalaTest, scalaCheck)
 lazy val akkaDeps = Seq(akkaSlf4J,
                         akkaCluster,
                         akkaTyped,
+                        akkaStream,
                         akkaManagement,
                         akkaManagementClusterBootstrap,
                         akkaServiceDiscoveryDNS,
                         akkaClusterHttpManagement)
 lazy val akkaPersistenceDeps = Seq(akkaPersistence, akkaClusterSharding)
+lazy val akkaHttpDeps = Seq(akkaHttp)
 
 lazy val hmda = (project in file("."))
   .enablePlugins(JavaServerAppPackaging, DockerPlugin, AshScriptPlugin)
@@ -99,6 +101,9 @@ lazy val health = (project in file("health"))
 
 lazy val api = (project in file("api"))
   .settings(hmdaBuildSettings: _*)
+  .settings(
+    libraryDependencies ++= commonDeps ++ akkaDeps ++ akkaHttpDeps
+  )
   .dependsOn(model)
 
 lazy val cluster = (project in file("cluster"))
