@@ -15,7 +15,9 @@ lazy val akkaPersistenceDeps = Seq(akkaPersistence, akkaClusterSharding)
 lazy val akkaHttpDeps = Seq(akkaHttp)
 
 lazy val hmda = (project in file("."))
-  .enablePlugins(JavaServerAppPackaging, DockerPlugin, AshScriptPlugin)
+  .enablePlugins(JavaServerAppPackaging,
+                 sbtdocker.DockerPlugin,
+                 AshScriptPlugin)
   .settings(hmdaBuildSettings: _*)
   .settings(
     Seq(
