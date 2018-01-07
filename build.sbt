@@ -13,6 +13,7 @@ lazy val akkaDeps = Seq(akkaSlf4J,
                         akkaClusterHttpManagement)
 lazy val akkaPersistenceDeps = Seq(akkaPersistence, akkaClusterSharding)
 lazy val akkaHttpDeps = Seq(akkaHttp, akkaHttpCirce)
+lazy val circeDeps = Seq(circe, circeGeneric)
 
 lazy val hmda = (project in file("."))
   .enablePlugins(JavaServerAppPackaging,
@@ -65,6 +66,13 @@ lazy val model = (project in file("model"))
     libraryDependencies ++= commonDeps ++ akkaDeps
   )
 
+lazy val httpModel = (project in file("http-model"))
+  .settings(hmdaBuildSettings: _*)
+  .settings(
+    libraryDependencies ++= commonDeps ++ akkaHttpDeps ++ circeDeps
+  )
+  .dependsOn(model)
+
 lazy val parser = (project in file("parser"))
   .settings(hmdaBuildSettings: _*)
   .dependsOn(model)
@@ -107,9 +115,9 @@ lazy val healthServer = (project in file("health-server"))
     compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
     WebKeys.packagePrefix in Assets := "public/",
     managedClasspath in Runtime += (packageBin in Assets).value,
-    libraryDependencies ++= commonDeps ++ akkaDeps ++ akkaHttpDeps
+    libraryDependencies ++= commonDeps ++ akkaDeps ++ akkaHttpDeps ++ circeDeps
   )
-  .dependsOn(healthSharedJVM, model)
+  .dependsOn(healthSharedJVM, httpModel)
 
 lazy val healthClient = (project in file("health-client"))
   .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
@@ -129,7 +137,7 @@ lazy val api = (project in file("api"))
   .settings(
     libraryDependencies ++= commonDeps ++ akkaDeps ++ akkaHttpDeps
   )
-  .dependsOn(model)
+  .dependsOn(httpModel)
 
 lazy val cluster = (project in file("cluster"))
   .settings(hmdaBuildSettings: _*)

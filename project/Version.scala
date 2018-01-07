@@ -7,5 +7,5 @@ object Version {
   val akkaHttp = "10.1.0-RC1"
   val akkaHttpJson = "1.19.0"
   val akkaClusterManagement = "0.8.0"
-
+  val circe = "0.9.0"
 }

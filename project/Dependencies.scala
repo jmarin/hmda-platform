@@ -17,5 +17,6 @@ object Dependencies {
   lazy val akkaServiceDiscoveryDNS = "com.lightbend.akka.discovery" %% "akka-discovery-dns" % Version.akkaClusterManagement
   lazy val akkaManagement = "com.lightbend.akka.management" %% "akka-management" % Version.akkaClusterManagement
   lazy val akkaClusterHttpManagement = "com.lightbend.akka.management" %% "akka-management-cluster-http" % Version.akkaClusterManagement
-
+  lazy val circe =  "io.circe" %% "circe-core" % Version.circe
+  lazy val circeGeneric = "io.circe" %% "circe-generic" % Version.circe
 }
