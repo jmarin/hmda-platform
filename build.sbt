@@ -12,7 +12,7 @@ lazy val akkaDeps = Seq(akkaSlf4J,
                         akkaServiceDiscoveryDNS,
                         akkaClusterHttpManagement)
 lazy val akkaPersistenceDeps = Seq(akkaPersistence, akkaClusterSharding)
-lazy val akkaHttpDeps = Seq(akkaHttp)
+lazy val akkaHttpDeps = Seq(akkaHttp, akkaHttpCirce)
 
 lazy val hmda = (project in file("."))
   .enablePlugins(JavaServerAppPackaging,
@@ -51,7 +51,10 @@ lazy val hmda = (project in file("."))
     model,
     parser,
     persistence,
-    health,
+    healthServer,
+    healthClient,
+    healthSharedJS,
+    healthSharedJVM,
     api,
     cluster
   )
@@ -94,12 +97,32 @@ lazy val publication = (project in file("publication"))
   )
   .dependsOn(model)
 
-lazy val health = (project in file("health"))
+lazy val healthServer = (project in file("health-server"))
+  .enablePlugins(SbtWeb)
   .settings(hmdaBuildSettings: _*)
   .settings(
-    libraryDependencies ++= commonDeps ++ akkaDeps
+    scalaJSProjects := Seq(healthClient),
+    pipelineStages in Assets := Seq(scalaJSPipeline),
+    // triggers scalaJSPipeline when using compile or continuous compilation
+    compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
+    WebKeys.packagePrefix in Assets := "public/",
+    managedClasspath in Runtime += (packageBin in Assets).value,
+    libraryDependencies ++= commonDeps ++ akkaDeps ++ akkaHttpDeps
   )
-  .dependsOn(model)
+  .dependsOn(healthSharedJVM, model)
+
+lazy val healthClient = (project in file("health-client"))
+  .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
+  .settings(hmdaBuildSettings: _*)
+  .dependsOn(healthSharedJS)
+
+lazy val healthShared =
+  (crossProject.crossType(CrossType.Pure) in file("health-shared"))
+    .settings(hmdaBuildSettings: _*)
+
+lazy val healthSharedJS = healthShared.js
+
+lazy val healthSharedJVM = healthShared.jvm
 
 lazy val api = (project in file("api"))
   .settings(hmdaBuildSettings: _*)
@@ -114,5 +137,5 @@ lazy val cluster = (project in file("cluster"))
   .dependsOn(validation)
   .dependsOn(query)
   .dependsOn(publication)
-  .dependsOn(health)
+  .dependsOn(healthServer)
   .dependsOn(api)
