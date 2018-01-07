@@ -12,7 +12,7 @@ lazy val akkaDeps = Seq(akkaSlf4J,
                         akkaServiceDiscoveryDNS,
                         akkaClusterHttpManagement)
 lazy val akkaPersistenceDeps = Seq(akkaPersistence, akkaClusterSharding)
-lazy val akkaHttpDeps = Seq(akkaHttp, akkaHttpCirce)
+lazy val akkaHttpDeps = Seq(akkaHttp, akkaHttpTestkit, akkaHttpCirce)
 lazy val circeDeps = Seq(circe, circeGeneric)
 
 lazy val hmda = (project in file("."))
@@ -50,6 +50,7 @@ lazy val hmda = (project in file("."))
   .dependsOn(cluster)
   .aggregate(
     model,
+    httpModel,
     parser,
     persistence,
     healthServer,
