@@ -9,7 +9,7 @@ object ClusterStatus {
   final val name = "ClusterStatus"
   case object GetMembers
   case class MemberDetails(address: Address, status: MemberStatus)
-  def props:Props = Props(new ClusterStatus)
+  def props: Props = Props(new ClusterStatus)
 }
 
 class ClusterStatus extends HmdaActor {
@@ -18,7 +18,8 @@ class ClusterStatus extends HmdaActor {
 
   private var members = Set.empty[MemberDetails]
 
-  Cluster(context.system).subscribe(self, InitialStateAsEvents, classOf[ClusterDomainEvent])
+  Cluster(context.system)
+    .subscribe(self, InitialStateAsEvents, classOf[ClusterDomainEvent])
 
   override def receive: Receive = super.receive orElse {
     case GetMembers =>
