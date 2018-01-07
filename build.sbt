@@ -36,6 +36,8 @@ lazy val hmda = (project in file("."))
       // add the fat jar
       filtered :+ (fatJar -> ("lib/" + fatJar.getName))
     },
+    dockerUpdateLatest := true,
+    dockerRepository := Some("jmarin"),
     dockerBaseImage := "openjdk:8-jre-alpine",
     // the bash scripts classpath only needs the fat jar
     scriptClasspath := Seq((assemblyJarName in assembly).value)
@@ -45,6 +47,7 @@ lazy val hmda = (project in file("."))
     model,
     parser,
     persistence,
+    health,
     api,
     cluster
   )
@@ -87,6 +90,13 @@ lazy val publication = (project in file("publication"))
   )
   .dependsOn(model)
 
+lazy val health = (project in file("health"))
+  .settings(hmdaBuildSettings: _*)
+  .settings(
+    libraryDependencies ++= commonDeps ++ akkaDeps
+  )
+  .dependsOn(model)
+
 lazy val api = (project in file("api"))
   .settings(hmdaBuildSettings: _*)
   .dependsOn(model)
@@ -97,4 +107,5 @@ lazy val cluster = (project in file("cluster"))
   .dependsOn(validation)
   .dependsOn(query)
   .dependsOn(publication)
+  .dependsOn(health)
   .dependsOn(api)

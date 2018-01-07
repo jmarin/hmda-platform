@@ -8,4 +8,8 @@ object HmdaQuery {
   val props: Props = Props(new HmdaQuery)
 }
 
-class HmdaQuery extends HmdaActor {}
+class HmdaQuery extends HmdaActor {
+  override def receive = super.receive orElse {
+    case _ =>
+  }
+}

@@ -5,8 +5,11 @@ import akka.cluster.Cluster
 import akka.management.AkkaManagement
 import akka.management.cluster.bootstrap.ClusterBootstrap
 import com.typesafe.config.ConfigFactory
+import hmda.api.HmdaApi
 import hmda.persistence.HmdaPersistence
 import hmda.query.HmdaQuery
+import hmda.validation.HmdaValidation
+import hmda.health.HmdaHealth
 import org.slf4j.LoggerFactory
 
 object HmdaPlatform extends App {
@@ -74,5 +77,20 @@ object HmdaPlatform extends App {
   //Start Query
   if (cluster.selfRoles.contains(HmdaClusterRoles.query)) {
     system.actorOf(HmdaQuery.props, HmdaQuery.name)
+  }
+
+  //Start Validation
+  if (cluster.selfRoles.contains(HmdaClusterRoles.validation)) {
+    system.actorOf(HmdaValidation.props, HmdaValidation.name)
+  }
+
+  //Start Health
+  if (cluster.selfRoles.contains(HmdaClusterRoles.health)) {
+    system.actorOf(HmdaHealth.props, HmdaHealth.name)
+  }
+
+  //Start API
+  if (cluster.selfRoles.contains(HmdaClusterRoles.api)) {
+    system.actorOf(HmdaApi.props, HmdaApi.name)
   }
 }
