@@ -6,6 +6,7 @@ import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 import akka.cluster.{Cluster, MemberStatus}
 import com.typesafe.config.ConfigFactory
 import hmda.model.actor.HmdaActor
+import hmda.model.cluster.{ClusterMembersDetails, MemberDetails}
 import hmda.model.messages.CommonMessages.StopActor
 import hmda.model.pubsub.HmdaPubSubTopics
 
@@ -13,8 +14,6 @@ import scala.concurrent.duration._
 
 object ClusterStatus {
   final val name = "ClusterStatus"
-
-  case class MemberDetails(address: Address, status: MemberStatus)
   sealed trait ClusterStatusCommand
   case object GetMembers extends ClusterStatusCommand
   case object PublishMemberDetails extends ClusterStatusCommand
@@ -33,7 +32,8 @@ class ClusterStatus extends HmdaActor {
   implicit val ec = context.dispatcher
 
   val config = ConfigFactory.load()
-  val schedulerStartupDelay = config.getInt("hmda.clusterStatusSchedulerStartupDelay")
+  val schedulerStartupDelay =
+    config.getInt("hmda.clusterStatusSchedulerStartupDelay")
   val schedulerInterval = config.getInt("hmda.clusterStatusSchedulerInterval")
 
   context.system.scheduler.schedule(schedulerStartupDelay.milliseconds,
@@ -46,11 +46,12 @@ class ClusterStatus extends HmdaActor {
 
   override def receive: Receive = super.receive orElse {
     case GetMembers =>
-      sender() ! members
+      sender() ! ClusterMembersDetails(members)
 
     case PublishMemberDetails =>
       println("Publishing member details")
-      mediator ! Publish(HmdaPubSubTopics.clusterStatusTopic, members)
+      mediator ! Publish(HmdaPubSubTopics.clusterStatusTopic,
+                         ClusterMembersDetails(members))
 
     case MemberJoined(member) =>
       log.info("Member joining: {}", member.address)
