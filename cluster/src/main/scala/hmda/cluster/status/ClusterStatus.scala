@@ -1,22 +1,45 @@
-package hmda.health.cluster
+package hmda.cluster.status
 
 import akka.actor.{Address, Props}
-import akka.cluster.Cluster
-import akka.cluster.MemberStatus
+import akka.cluster.pubsub.DistributedPubSub
+import akka.cluster.pubsub.DistributedPubSubMediator.Publish
+import akka.cluster.{Cluster, MemberStatus}
+import com.typesafe.config.ConfigFactory
 import hmda.model.actor.HmdaActor
+import hmda.model.messages.CommonMessages.StopActor
+import hmda.model.pubsub.HmdaPubSubTopics
+
+import scala.concurrent.duration._
 
 object ClusterStatus {
   final val name = "ClusterStatus"
-  case object GetMembers
+
   case class MemberDetails(address: Address, status: MemberStatus)
+  sealed trait ClusterStatusCommand
+  case object GetMembers extends ClusterStatusCommand
+  case object PublishMemberDetails extends ClusterStatusCommand
+
   def props: Props = Props(new ClusterStatus)
 }
 
 class ClusterStatus extends HmdaActor {
-  import akka.cluster.ClusterEvent._
   import ClusterStatus._
+  import akka.cluster.ClusterEvent._
+
+  val mediator = DistributedPubSub(context.system).mediator
 
   private var members = Set.empty[MemberDetails]
+
+  implicit val ec = context.dispatcher
+
+  val config = ConfigFactory.load()
+  val schedulerStartupDelay = config.getInt("hmda.clusterStatusSchedulerStartupDelay")
+  val schedulerInterval = config.getInt("hmda.clusterStatusSchedulerInterval")
+
+  context.system.scheduler.schedule(schedulerStartupDelay.milliseconds,
+                                    schedulerInterval.seconds,
+                                    self,
+                                    PublishMemberDetails)
 
   Cluster(context.system)
     .subscribe(self, InitialStateAsEvents, classOf[ClusterDomainEvent])
@@ -24,6 +47,10 @@ class ClusterStatus extends HmdaActor {
   override def receive: Receive = super.receive orElse {
     case GetMembers =>
       sender() ! members
+
+    case PublishMemberDetails =>
+      println("Publishing member details")
+      mediator ! Publish(HmdaPubSubTopics.clusterStatusTopic, members)
 
     case MemberJoined(member) =>
       log.info("Member joining: {}", member.address)
@@ -51,10 +78,11 @@ class ClusterStatus extends HmdaActor {
     case ReachableMember(member) =>
       log.info("Member reachable: {}", member.address)
       updateMembers(MemberDetails(member.address, member.status))
+
+    case StopActor =>
+      context stop self
   }
 
-  private def updateMembers(memberDetails: MemberDetails) = {
-
-  }
+  private def updateMembers(memberDetails: MemberDetails) = {}
 
 }

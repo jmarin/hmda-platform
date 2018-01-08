@@ -31,8 +31,7 @@ class HmdaHealth extends HttpServer with BaseHttpApi with ClusterStatusPaths {
   override implicit val ec: ExecutionContext = context.dispatcher
   override val log = Logging(system, getClass)
 
-
-  override val paths: Route = routes(s"$name") ~ clusterStatusRoutes(context)
+  override val paths: Route = routes(s"$name") ~ clusterStatusRoutes
 
   override val http: Future[Http.ServerBinding] = Http(system).bindAndHandle(
     paths,

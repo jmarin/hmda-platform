@@ -2,14 +2,20 @@ package hmda.cluster
 
 import akka.actor.ActorSystem
 import akka.cluster.Cluster
+import akka.cluster.singleton.{
+  ClusterSingletonManager,
+  ClusterSingletonManagerSettings
+}
 import akka.management.AkkaManagement
 import akka.management.cluster.bootstrap.ClusterBootstrap
 import com.typesafe.config.ConfigFactory
 import hmda.api.HmdaApi
+import hmda.cluster.status.ClusterStatus
 import hmda.persistence.HmdaPersistence
 import hmda.query.HmdaQuery
 import hmda.validation.HmdaValidation
 import hmda.health.HmdaHealth
+import hmda.model.messages.CommonMessages.StopActor
 import org.slf4j.LoggerFactory
 
 object HmdaPlatform extends App {
@@ -67,6 +73,16 @@ object HmdaPlatform extends App {
     ActorSystem(clusterConfig.getString("clustering.name"), clusterConfig)
 
   val cluster = Cluster(system)
+
+  //Start singletons
+  system.actorOf(
+    ClusterSingletonManager.props(
+      singletonProps = ClusterStatus.props,
+      terminationMessage = StopActor,
+      settings = ClusterSingletonManagerSettings(system)
+    ),
+    name = ClusterStatus.name
+  )
 
   //Start Persistence
   if (cluster.selfRoles.contains(HmdaClusterRoles.persistence)) {
