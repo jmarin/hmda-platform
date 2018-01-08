@@ -53,6 +53,8 @@ class ClusterStatus extends HmdaActor {
       updateMembers(MemberDetails(member.address, member.status))
   }
 
-  private def updateMembers(memberDetails: MemberDetails) = ???
+  private def updateMembers(memberDetails: MemberDetails) = {
+
+  }
 
 }
