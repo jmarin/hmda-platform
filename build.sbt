@@ -13,6 +13,7 @@ lazy val akkaDeps = Seq(akkaSlf4J,
                         akkaClusterHttpManagement)
 lazy val akkaPersistenceDeps = Seq(akkaPersistence, akkaClusterSharding)
 lazy val akkaHttpDeps = Seq(akkaHttp, akkaHttpTestkit, akkaHttpCirce)
+lazy val catsDeps = Seq(catsCore)
 lazy val circeDeps = Seq(circe, circeGeneric)
 
 lazy val hmda = (project in file("."))
@@ -61,7 +62,7 @@ lazy val hmda = (project in file("."))
 lazy val model = (project in file("model"))
   .settings(hmdaBuildSettings: _*)
   .settings(
-    libraryDependencies ++= commonDeps ++ akkaDeps
+    libraryDependencies ++= commonDeps ++ akkaDeps ++ catsDeps
   )
 
 lazy val httpModel = (project in file("http-model"))
@@ -73,7 +74,10 @@ lazy val httpModel = (project in file("http-model"))
 
 lazy val parser = (project in file("parser"))
   .settings(hmdaBuildSettings: _*)
-  .dependsOn(model)
+  .settings(
+    libraryDependencies ++= commonDeps
+  )
+  .dependsOn(model % "compile->compile;test->test")
 
 lazy val persistence = (project in file("persistence"))
   .settings(hmdaBuildSettings: _*)
