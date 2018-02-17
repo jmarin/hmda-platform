@@ -12,7 +12,13 @@ lazy val akkaDeps = Seq(akkaSlf4J,
                         akkaServiceDiscoveryDNS,
                         akkaClusterHttpManagement)
 lazy val akkaPersistenceDeps = Seq(akkaPersistence, akkaClusterSharding)
-lazy val akkaHttpDeps = Seq(akkaHttp, akkaHttpTestkit, akkaHttpCirce)
+lazy val akkaHttpDeps = Seq(akkaHttp,
+                            akkaHttpTestkit,
+                            akkaHttpCirce,
+                            metrics,
+                            prometheusExporter,
+                            prometheusClient,
+                            prometheusHotspot)
 lazy val circeDeps = Seq(circe, circeGeneric)
 
 lazy val scalafmtSettings = Seq(

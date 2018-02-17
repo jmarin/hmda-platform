@@ -8,5 +8,7 @@ object Version {
   val akkaHttpJson = "1.19.0"
   val akkaClusterManagement = "0.8.0"
   val circe = "0.9.0"
+  val metricsScala = "3.5.6"
+  val prometheus = "0.2.0"
 
 }

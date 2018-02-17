@@ -26,5 +26,10 @@ object Dependencies {
   lazy val akkaClusterHttpManagement = "com.lightbend.akka.management" %% "akka-management-cluster-http" % Version.akkaClusterManagement
   lazy val circe =  "io.circe" %% "circe-core" % Version.circe
   lazy val circeGeneric = "io.circe" %% "circe-generic" % Version.circe
+  lazy val metrics = "nl.grons" %% "metrics-scala" % Version.metricsScala
+  lazy val prometheusExporter = "io.prometheus" % "simpleclient_dropwizard" % Version.prometheus
+  lazy val prometheusClient = "io.prometheus" % "simpleclient_common" % Version.prometheus
+  lazy val prometheusHotspot = "io.prometheus" % "simpleclient_hotspot" % Version.prometheus
+
 
 }
