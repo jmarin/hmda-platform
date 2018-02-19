@@ -1,0 +1,38 @@
+version: '2'
+
+services:
+  hmda-platform:
+    image: hmda/hmda-platform:latest
+    ports:
+      - '8080:8080'
+      - '8081:8081'
+      - '8082:8082'
+      - '9000:9000'
+
+  hmda-prometheus:
+    image: hmda/prometheus
+    ports:
+      - '9090:9090'
+    volumes:
+      - prometheus_data:/prometheus
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - '9100:9100'
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=pass
+    depends_on:
+      - hmda-prometheus
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
