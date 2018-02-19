@@ -1,8 +1,9 @@
 from grafanalib.core import *
 
 dashboard = Dashboard(
-    title = "HMDA Platform JVM Statistics",
-    rows = [
+    title="HMDA Platform JVM Statistics",
+    timezone='browser',
+    rows=[
         Row(panels=[
             Graph(
                 title = "Memory Usage",
