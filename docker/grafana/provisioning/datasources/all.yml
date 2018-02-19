@@ -1,0 +1,9 @@
+datasources:
+  - access: 'proxy'
+    editable: true
+    name: 'Prometheus Monitor'
+    org_id: 1
+    type: 'prometheus'
+    url: 'http://hmda-prometheus:9090'
+    version: 1
+

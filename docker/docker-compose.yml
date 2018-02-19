@@ -22,9 +22,9 @@ services:
       - '9100:9100'
 
   grafana:
-    image: grafana/grafana:latest
+    image: hmda/grafana:latest
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=pass
+      - GF_SECURITY_ADMIN_PASSWORD=admin
     depends_on:
       - hmda-prometheus
     ports:
