@@ -9,6 +9,7 @@ import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import hmda.http.api.BaseHttpApi
 import hmda.http.model.common.HttpServer
+import hmda.http.api.ServiceNames._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -24,7 +25,7 @@ class HmdaFilingApi extends HttpServer with BaseHttpApi {
   override implicit val ec: ExecutionContext = context.dispatcher
   override val log = Logging(system, getClass)
 
-  override val name: String = "hmda-filing-api"
+  override val name: String = hmdaFilingApi
   override val host: String = config.getString("hmda.http.filingHost")
   override val port: Int = config.getInt("hmda.http.filingPort")
 

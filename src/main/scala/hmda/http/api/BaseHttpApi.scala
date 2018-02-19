@@ -12,6 +12,9 @@ import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import hmda.http.model.common.HmdaServiceStatus
 import hmda.http.model.directives.HmdaTimeDirectives
 import io.circe.generic.auto._
+import hmda.http.model.directives.ApiMetrics._
+import scala.concurrent.ExecutionContext
+import hmda.http.model.BaseApiMetricsCollectors._
 
 trait BaseHttpApi extends HmdaTimeDirectives {
 
@@ -21,16 +24,33 @@ trait BaseHttpApi extends HmdaTimeDirectives {
 
   def rootPath(name: String) =
     pathSingleSlash {
-      timedGet { _ =>
-        complete {
-          val now = Instant.now.toString
-          val host = InetAddress.getLocalHost.getHostName
-          val status = HmdaServiceStatus("OK", name, now, host)
-          log.debug(status.toString)
-          ToResponseMarshallable(status)
-        }
+      complete {
+        val now = Instant.now.toString
+        val host = InetAddress.getLocalHost.getHostName
+        val status = HmdaServiceStatus("OK", name, now, host)
+        log.debug(status.toString)
+        ToResponseMarshallable(status)
       }
     }
 
-  def routes(apiName: String) = encodeResponse { rootPath(apiName) }
+  def routes(apiName: String)(implicit ec: ExecutionContext) = encodeResponse {
+
+    val requestsInProgress = apiName match {
+      case "hmda-filing-api"  => filingApiRequestsInProgress
+      case "hmda-admin-api"   => adminApiRequestsInProgress
+      case "hmda-public-api"  => publicApiRequestsInProgress
+      case "hmda-jvm-metrics" => jvmMetricsApiRequestsInProgress
+    }
+
+    val requestLatency = apiName match {
+      case "hmda-filing-api"  => filingApiRequestLatency
+      case "hmda-admin-api"   => adminApiRequestLatency
+      case "hmda-public-api"  => publicApiRequestLatency
+      case "hmda-jvm-metrics" => jvmMetricsApiRequestLatency
+    }
+
+    requestStats(requestsInProgress, requestLatency) {
+      rootPath(apiName)
+    }
+  }
 }

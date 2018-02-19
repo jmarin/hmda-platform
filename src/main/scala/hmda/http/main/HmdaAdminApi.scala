@@ -9,6 +9,7 @@ import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import hmda.http.api.BaseHttpApi
 import hmda.http.model.common.HttpServer
+import hmda.http.api.ServiceNames._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -25,7 +26,7 @@ class HmdaAdminApi extends HttpServer with BaseHttpApi {
   override implicit val ec: ExecutionContext = context.dispatcher
   override val log = Logging(system, getClass)
 
-  override val name: String = "hmda-admin-api"
+  override val name: String = hmdaAdminApi
   override val host: String = config.getString("hmda.http.adminHost")
   override val port: Int = config.getInt("hmda.http.adminPort")
 

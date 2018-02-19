@@ -16,6 +16,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import io.prometheus.client.dropwizard.DropwizardExports
 import io.prometheus.client.hotspot.DefaultExports
 import io.prometheus.client.CollectorRegistry
+import hmda.http.api.ServiceNames._
 
 object HmdaJvmMetricsApi {
   DefaultExports.initialize()
@@ -35,11 +36,11 @@ class HmdaJvmMetricsApi extends HttpServer with BaseHttpApi with JvmMetricsApi {
   override implicit val ec: ExecutionContext = context.dispatcher
   override val log = Logging(system, getClass)
 
-  override val name: String = "hmda-jvm-metrics"
+  override val name: String = hmdaJvmMetricsApi
   override val host: String = config.getString("hmda.http.filingHost")
   override val port: Int = config.getInt("hmda.http.jvmMetricsPort")
 
-  override val paths: Route = routes(s"name") ~ prometheusPath(
+  override val paths: Route = routes(s"$name") ~ prometheusPath(
     CollectorRegistry.defaultRegistry)
 
   override val http: Future[Http.ServerBinding] = Http(system).bindAndHandle(

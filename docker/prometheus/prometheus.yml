@@ -23,7 +23,7 @@ scrape_configs:
     static_configs:
       - targets: ['node-exporter:9100']
 
-  - job_name: 'hmda-jvm-metrics'
+  - job_name: 'hmda-metrics'
 
     static_configs:
       - targets: ['hmda-platform:9000']
