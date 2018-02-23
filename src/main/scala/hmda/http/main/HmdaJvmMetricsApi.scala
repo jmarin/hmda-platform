@@ -36,7 +36,7 @@ class HmdaJvmMetricsApi extends HttpServer with BaseHttpApi with JvmMetricsApi {
   override implicit val ec: ExecutionContext = context.dispatcher
   override val log = Logging(system, getClass)
 
-  override val name: String = hmdaJvmMetricsApi
+  override val name: String = hmdaJvmMetrics
   override val host: String = config.getString("hmda.http.filingHost")
   override val port: Int = config.getInt("hmda.http.jvmMetricsPort")
 

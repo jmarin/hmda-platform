@@ -23,7 +23,7 @@ trait BaseHttpApi extends HmdaTimeDirectives {
   implicit val materializer: ActorMaterializer
   val log: LoggingAdapter
 
-  def rootPath(name: String) =
+  def rootPath(name: String) = {
     pathSingleSlash {
       complete {
         val now = Instant.now.toString
@@ -33,6 +33,7 @@ trait BaseHttpApi extends HmdaTimeDirectives {
         ToResponseMarshallable(status)
       }
     }
+
 
   def routes(apiName: String)(implicit ec: ExecutionContext) = encodeResponse {
     requestStats(apiName, requestLatency) {

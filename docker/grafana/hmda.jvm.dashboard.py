@@ -6,7 +6,7 @@ dashboard = Dashboard(
     rows=[
         Row(panels=[
             Graph(
-                title = "Memory Usage",
+                title="Memory Usage",
                 dataSource='Prometheus Monitor',
                 targets=[
                     Target(

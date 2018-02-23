@@ -26,7 +26,7 @@ class HmdaPublicApi extends HttpServer with BaseHttpApi {
   override implicit val ec: ExecutionContext = context.dispatcher
   override val log = Logging(system, getClass)
 
-  override val name: String = hmdaPublicApi
+  override val name: String = hmdaPublicRoot
   override val host: String = config.getString("hmda.http.publicHost")
   override val port: Int = config.getInt("hmda.http.publicPort")
 

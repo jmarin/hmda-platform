@@ -2,9 +2,9 @@ package hmda.http.api
 
 object ServiceNames {
 
-  final val hmdaFilingApi = "hmda-filing-api"
-  final val hmdaAdminApi = "hmda-admin-api"
-  final val hmdaPublicApi = "hmda-public-api"
-  final val hmdaJvmMetricsApi = "hmda-jvm-metrics"
+  final val hmdaFilingRoot = "hmda-filing-root"
+  final val hmdaAdminRoot = "hmda-admin-root"
+  final val hmdaPublicRoot = "hmda-public-root"
+  final val hmdaJvmMetrics = "hmda-jvm-metrics"
 
 }
