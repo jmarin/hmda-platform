@@ -35,7 +35,6 @@ trait BaseHttpApi extends HmdaTimeDirectives {
     }
 
   def routes(apiName: String)(implicit ec: ExecutionContext) = encodeResponse {
-
     requestStats(apiName, requestLatency) {
       rootPath(apiName)
     }

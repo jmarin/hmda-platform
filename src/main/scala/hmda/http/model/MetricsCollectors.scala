@@ -9,7 +9,7 @@ object MetricsCollectors {
       .build()
       .name(s"hmda_request_seconds")
       .help("Request latency in seconds")
-      .labelNames("service", "method")
+      .labelNames("service", "method", "status")
       .register()
 
 }

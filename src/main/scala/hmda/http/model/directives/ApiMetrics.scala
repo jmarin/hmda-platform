@@ -11,24 +11,27 @@ import scala.util.{Success, Try}
 object ApiMetrics {
 
   def requestStats(serviceName: String, requestLatency: Histogram)(
-      route: Route)(implicit ec: ExecutionContext) =
-    aroundRequest(reportRequestMetrics(serviceName, requestLatency))(ec)(route)
+      route: Route)(implicit ec: ExecutionContext) = {
 
-  private def reportRequestMetrics(serviceName: String,
+    val initialTime = System.currentTimeMillis()
+    aroundRequest(
+      reportRequestMetrics(initialTime, serviceName, requestLatency))(ec)(route)
+  }
+
+  private def reportRequestMetrics(initialTime: Long,
+                                   serviceName: String,
                                    requestLatency: Histogram)(
-      ctx: RequestContext): Try[RouteResult] => Unit = {
-    val requestTimer =
-      requestLatency
-        .labels(serviceName, ctx.request.method.value)
-        .startTimer()
-
-    result =>
-      result match {
-        case Success(Complete(response)) =>
-          requestLatency.labels(serviceName, ctx.request.method.value)
-          requestTimer.observeDuration()
-        case _ => // do nothing
-      }
+      ctx: RequestContext): Try[RouteResult] => Unit = { result =>
+    result match {
+      case Success(Complete(response)) =>
+        val duration = System.currentTimeMillis() - initialTime
+        requestLatency
+          .labels(serviceName,
+                  ctx.request.method.value,
+                  response.status.intValue().toString)
+          .observe(duration.toDouble)
+      case _ => // do nothing
+    }
   }
 
 }
