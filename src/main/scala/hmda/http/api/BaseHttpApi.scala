@@ -33,6 +33,7 @@ trait BaseHttpApi extends HmdaTimeDirectives {
         ToResponseMarshallable(status)
       }
     }
+  }
 
 
   def routes(apiName: String)(implicit ec: ExecutionContext) = encodeResponse {
