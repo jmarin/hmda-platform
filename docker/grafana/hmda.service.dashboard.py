@@ -11,8 +11,8 @@ dashboard=Dashboard(
                 description="Request duration within which 95% of requests are served",
                 targets=[
                     Target(
-                        expr='histogram_quantile(0.95, sum(rate(hmda_request_ms_bucket[5m])) by (service, method, status))',
-                        legendFormat='',
+                        expr='histogram_quantile(0.95, rate(hmda_request_ms_bucket[5m]))',
+                        legendFormat='{{service}} - {{method}} - {{status}}',
                         refId='A'
                     )
                 ]
