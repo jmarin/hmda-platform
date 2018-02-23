@@ -13,8 +13,9 @@ import hmda.http.model.common.HmdaServiceStatus
 import hmda.http.model.directives.HmdaTimeDirectives
 import io.circe.generic.auto._
 import hmda.http.model.directives.ApiMetrics._
+
 import scala.concurrent.ExecutionContext
-import hmda.http.model.BaseApiMetricsCollectors._
+import hmda.http.model.MetricsCollectors._
 
 trait BaseHttpApi extends HmdaTimeDirectives {
 
@@ -35,21 +36,7 @@ trait BaseHttpApi extends HmdaTimeDirectives {
 
   def routes(apiName: String)(implicit ec: ExecutionContext) = encodeResponse {
 
-    val requestsInProgress = apiName match {
-      case "hmda-filing-api"  => filingApiRequestsInProgress
-      case "hmda-admin-api"   => adminApiRequestsInProgress
-      case "hmda-public-api"  => publicApiRequestsInProgress
-      case "hmda-jvm-metrics" => jvmMetricsApiRequestsInProgress
-    }
-
-    val requestLatency = apiName match {
-      case "hmda-filing-api"  => filingApiRequestLatency
-      case "hmda-admin-api"   => adminApiRequestLatency
-      case "hmda-public-api"  => publicApiRequestLatency
-      case "hmda-jvm-metrics" => jvmMetricsApiRequestLatency
-    }
-
-    requestStats(requestsInProgress, requestLatency) {
+    requestStats(apiName, requestLatency) {
       rootPath(apiName)
     }
   }

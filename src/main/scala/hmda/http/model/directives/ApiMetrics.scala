@@ -3,29 +3,31 @@ package hmda.http.model.directives
 import akka.http.scaladsl.server.RouteResult.Complete
 import akka.http.scaladsl.server.{RequestContext, Route, RouteResult}
 import hmda.http.model.directives.AroundDirectives.aroundRequest
-import io.prometheus.client.{Gauge, Histogram}
+import io.prometheus.client.Histogram
 
 import scala.concurrent.ExecutionContext
 import scala.util.{Success, Try}
 
 object ApiMetrics {
 
-  def requestStats(requestsInProgress: Gauge, requestLatency: Histogram)(
+  def requestStats(serviceName: String, requestLatency: Histogram)(
       route: Route)(implicit ec: ExecutionContext) =
-    aroundRequest(reportRequestMetrics(requestsInProgress, requestLatency))(ec)(
-      route)
+    aroundRequest(reportRequestMetrics(serviceName, requestLatency))(ec)(route)
 
-  private def reportRequestMetrics(requestsInProgress: Gauge,
+  private def reportRequestMetrics(serviceName: String,
                                    requestLatency: Histogram)(
       ctx: RequestContext): Try[RouteResult] => Unit = {
-    requestsInProgress.inc()
-    val requestTimer = requestLatency.startTimer()
+    val requestTimer =
+      requestLatency
+        .labels(serviceName, ctx.request.method.value)
+        .startTimer()
 
     result =>
-      requestsInProgress.dec()
       result match {
-        case Success(Complete(_)) => requestTimer.observeDuration()
-        case _                    => // do nothing
+        case Success(Complete(response)) =>
+          requestLatency.labels(serviceName, ctx.request.method.value)
+          requestTimer.observeDuration()
+        case _ => // do nothing
       }
   }
 

@@ -4,7 +4,6 @@ import akka.event.LoggingAdapter
 import akka.http.scaladsl.server.Directive0
 import akka.http.scaladsl.server.Directives._
 
-
 trait HmdaTimeDirectives {
 
   val log: LoggingAdapter
