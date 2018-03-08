@@ -29,6 +29,7 @@ case class Applicant(
       s"${ethnicity.ethnicity5.code}|$otherHispanicOrLatino|${ethnicityObserved.code}|${race.race1.code}|${race.race2.code}|" +
       s"${race.race3.code}|${race.race4.code}|${race.race5.code}|${raceObserved.code}|$otherNativeRace|$otherAsianRace|" +
       s"$otherPacificIslanderRace|${sex.code}|${coSex.code}|${sexObserved.code}|${coSexObserved.code}|$age|$coAge|" +
-      s"$income|$creditScore|${creditScoreType.code}|${debtToIncomeRatio.getOrElse("")}|$otherCreditScoreModel"
+      s"$income|$creditScore|${creditScoreType.code}|${debtToIncomeRatio
+        .getOrElse("")}|$otherCreditScoreModel"
   }
 }
