@@ -1,12 +1,6 @@
 package hmda.model.filing.lar
 
-import hmda.model.filing.PipeDelimited
-import hmda.model.filing.lar.enums.{
-  ConstructionMethodEnum,
-  LoanPurposeEnum,
-  LoanTypeEnum,
-  OccupancyEnum
-}
+import hmda.model.filing.lar.enums._
 
 case class Loan(
     ULI: Option[String] = None,
@@ -17,12 +11,17 @@ case class Loan(
     occupancy: OccupancyEnum,
     amount: Double,
     loanTerm: String
-) extends PipeDelimited {
-  override def toCSV: String = {
-    val uliStr = ULI match {
-      case Some(uli) => uli
-      case None      => ""
-    }
-    s"$uliStr|$applicationDate|${loanType.code}|${loanPurpose.code}|${constructionMethod.code}|${occupancy.code}|$amount|$loanTerm"
+)
+
+object Loan {
+  def empty: Loan = {
+    Loan(None,
+         "",
+         Conventional,
+         HomePurchase,
+         SiteBuilt,
+         PrincipalResidence,
+         0.0,
+         "")
   }
 }
