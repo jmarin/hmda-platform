@@ -1,41 +1,25 @@
 package hmda.model.filing.lar
 
-import enums._
 import hmda.model.filing.PipeDelimited
+import hmda.model.filing.lar.enums._
 
 case class LoanApplicationRegister(
-    id: Int = 2,
-    LEI: Option[String] = None,
+    larIdentifier: LarIdentifier,
     loan: Loan,
-    preapproval: PreapprovalEnum,
-    actionTakenType: ActionTakenTypeEnum,
-    actionTakenDate: Int,
+    action: LarAction,
     geography: Geography,
     applicant: Applicant,
     coApplicant: Applicant,
     income: String,
     purchaserType: PurchaserEnum,
-    rateSpread: String,
     hoepaStatus: HOEPAStatusEnum,
     lienStatus: LienStatusEnum,
     denial: Denial,
     loanDisclosure: LoanDisclosure,
-    interestRate: Option[String] = None,
-    prepaymentPenaltyTerm: String,
-    debtToIncomeRatio: Option[String] = None,
-    loanToValueRatio: Option[String] = None,
-    introductoryRatePeriod: String,
     nonAmortizingFeatures: NonAmortizingFeatures,
-    propertyValue: String,
-    manufacturedHomeSecuredProperty: Option[
-      ManufacturedHomeSecuredPropertyEnum] = None,
-    manufacturedHomeLandPropertyInterestEnum: Option[
-      ManufacturedHomeLandPropertyInterestEnum] = None,
-    totalUnits: Option[Int] = None,
-    multiFamilyAffordableUnits: Option[String] = None,
+    property: Property,
     applicationSubmission: ApplicationSubmissionEnum,
     payableToInstitution: PayableToInstitutionEnum,
-    NMLSRIdentifier: String,
     AUS: Option[AutomatedUnderwritingSystem] = None,
     ausResult: Option[AutomatedUnderwritingSystemResult] = None,
     reverseMortgage: Option[MortgageTypeEnum] = None,
@@ -46,13 +30,13 @@ case class LoanApplicationRegister(
   override def toCSV: String = {
 
     val manufacturedHomeSecuredPropertyStr =
-      manufacturedHomeSecuredProperty match {
+      property.manufacturedHomeSecuredProperty match {
         case Some(homeSecured) => homeSecured.code
         case None              => ""
       }
 
     val manufacturedHomeLandStr =
-      manufacturedHomeLandPropertyInterestEnum match {
+      property.manufacturedHomeLandPropertyInterestEnum match {
         case Some(homeLandProperty) => homeLandProperty.code
         case None                   => ""
       }
@@ -84,8 +68,9 @@ case class LoanApplicationRegister(
       case None                       => ""
     }
 
-    s"$id|${LEI.getOrElse("")}|${loan.ULI.getOrElse("")}|${loan.applicationDate}|${loan.loanType.code}|${loan.loanPurpose.code}|${preapproval.code}|" +
-      s"${loan.constructionMethod.code}|${loan.occupancy.code}|${loan.amount}|${actionTakenType.code}|$actionTakenDate|" +
+    s"${larIdentifier.id}|${larIdentifier.LEI.getOrElse("")}|${loan.ULI.getOrElse(
+      "")}|${loan.applicationDate}|${loan.loanType.code}|${loan.loanPurpose.code}|${action.preapproval.code}|" +
+      s"${loan.constructionMethod.code}|${loan.occupancy.code}|${loan.amount}|${action.actionTakenType.code}|$action.actionTakenDate|" +
       s"${geography.street}|${geography.city}|${geography.state}|${geography.zipCode}|${geography.county}|${geography.tract}|" +
       s"${applicant.ethnicity.ethnicity1.code}|${applicant.ethnicity.ethnicity2.code}|${applicant.ethnicity.ethnicity3.code}|" +
       s"${applicant.ethnicity.ethnicity4.code}|${applicant.ethnicity.ethnicity5.code}|${applicant.ethnicity.otherHispanicOrLatino}|" +
@@ -97,16 +82,17 @@ case class LoanApplicationRegister(
       s"${coApplicant.race.race3.code}|${coApplicant.race.race4.code}|${coApplicant.race.race5.code}|${coApplicant.race.otherNativeRace}|${coApplicant.race.otherAsianRace}|" +
       s"${coApplicant.race.otherPacificIslanderRace}|${applicant.race.raceObserved.code}|${coApplicant.race.raceObserved.code}|" +
       s"${applicant.sex.sexEnum.code}|${coApplicant.sex.sexEnum.code}|${applicant.sex.sexObservedEnum.code}|${coApplicant.sex.sexObservedEnum.code}|" +
-      s"${applicant.age}|${coApplicant.age}|$income|${purchaserType.code}|$rateSpread|${hoepaStatus.code}|${lienStatus.code}|${applicant.creditScore}|${coApplicant.creditScore}|" +
+      s"${applicant.age}|${coApplicant.age}|$income|${purchaserType.code}|${loan.rateSpread}|${hoepaStatus.code}|${lienStatus.code}|${applicant.creditScore}|${coApplicant.creditScore}|" +
       s"${applicant.creditScoreType.code}|${applicant.otherCreditScoreModel}|${coApplicant.creditScoreType.code}|${coApplicant.otherCreditScoreModel}|" +
       s"${denial.denialReason1}|${denial.denialReason2}|${denial.denialReason3}|${denial.denialReason4}|${denial.otherDenialReason}|${loanDisclosure.totalLoanCosts}|" +
-      s"${loanDisclosure.totalPointsAndFees}|${loanDisclosure.originationCharges}|${loanDisclosure.discountPoints}|${loanDisclosure.lenderCredits}|${interestRate
+      s"${loanDisclosure.totalPointsAndFees}|${loanDisclosure.originationCharges}|${loanDisclosure.discountPoints}|${loanDisclosure.lenderCredits}|${loan.interestRate
         .getOrElse("")}|" +
-      s"$prepaymentPenaltyTerm|${debtToIncomeRatio.getOrElse("")}|${loanToValueRatio
-        .getOrElse("")}|${loan.loanTerm}|$introductoryRatePeriod|${nonAmortizingFeatures.balloonPayment.code}|" +
+      s"${loan.prepaymentPenaltyTerm}|${loan.debtToIncomeRatio.getOrElse("")}|${loan.loanToValueRatio
+        .getOrElse("")}|${loan.loanTerm}|${loan.introductoryRatePeriod}|${nonAmortizingFeatures.balloonPayment.code}|" +
       s"${nonAmortizingFeatures.interestOnlyPayments.code}|${nonAmortizingFeatures.negativeAmortization.code}|${nonAmortizingFeatures.otherNonAmortizingFeatures.code}|" +
-      s"$propertyValue|$manufacturedHomeSecuredPropertyStr|$manufacturedHomeLandStr|$totalUnits|${multiFamilyAffordableUnits
+      s"${property.propertyValue}|$manufacturedHomeSecuredPropertyStr|$manufacturedHomeLandStr|${property.totalUnits}|${property.multiFamilyAffordableUnits
         .getOrElse("")}|${applicationSubmission.code}|" +
-      s"${payableToInstitution.code}|$NMLSRIdentifier|$ausStr|$ausResultStr|$reverseMortgageStr|$lineOfCreditStr|$businessOrCommercialStr"
+      s"${payableToInstitution.code}|${larIdentifier.NMLSRIdentifier}|$ausStr|$ausResultStr|$reverseMortgageStr|$lineOfCreditStr|$businessOrCommercialStr"
+
   }
 }
