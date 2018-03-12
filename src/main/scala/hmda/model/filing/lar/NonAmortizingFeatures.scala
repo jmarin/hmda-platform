@@ -7,12 +7,3 @@ case class NonAmortizingFeatures(
     interestOnlyPayments: InterestOnlyPaymentsEnum,
     negativeAmortization: NegativeAmortizationEnum,
     otherNonAmortizingFeatures: OtherNonAmortizingFeaturesEnum)
-
-object NonAmortizingFeatures {
-  def empty: NonAmortizingFeatures = {
-    NonAmortizingFeatures(BalloonPayment,
-                          InterestOnlyPayment,
-                          NegativeAmortization,
-                          OtherNonFullyAmortizingFeatures)
-  }
-}

@@ -1,11 +1,6 @@
 package hmda.model.filing.lar
 
-import hmda.model.filing.lar.enums.{
-  EthnicityEnum,
-  EthnicityNotApplicable,
-  EthnicityObservedEnum,
-  EthnicityObservedNotApplicable
-}
+import hmda.model.filing.lar.enums.{EthnicityEnum, EthnicityObservedEnum}
 
 case class Ethnicity(
     ethnicity1: EthnicityEnum,
@@ -16,17 +11,3 @@ case class Ethnicity(
     otherHispanicOrLatino: String,
     ethnicityObserved: EthnicityObservedEnum
 )
-
-object Ethnicity {
-  def empty: Ethnicity = {
-    Ethnicity(
-      EthnicityNotApplicable,
-      EthnicityNotApplicable,
-      EthnicityNotApplicable,
-      EthnicityNotApplicable,
-      EthnicityNotApplicable,
-      "",
-      EthnicityObservedNotApplicable
-    )
-  }
-}

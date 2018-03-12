@@ -1,11 +1,6 @@
 package hmda.model.filing.lar
 
-import hmda.model.filing.lar.enums.{
-  RaceEnum,
-  RaceNotApplicable,
-  RaceObservedEnum,
-  RaceObservedNotApplicable
-}
+import hmda.model.filing.lar.enums.{RaceEnum, RaceObservedEnum}
 
 case class Race(
     race1: RaceEnum,
@@ -18,19 +13,3 @@ case class Race(
     otherPacificIslanderRace: String,
     raceObserved: RaceObservedEnum
 )
-
-object Race {
-  def empty: Race = {
-    Race(
-      RaceNotApplicable,
-      RaceNotApplicable,
-      RaceNotApplicable,
-      RaceNotApplicable,
-      RaceNotApplicable,
-      "",
-      "",
-      "",
-      RaceObservedNotApplicable
-    )
-  }
-}

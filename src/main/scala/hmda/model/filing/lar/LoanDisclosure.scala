@@ -5,9 +5,3 @@ case class LoanDisclosure(totalLoanCosts: String,
                           originationCharges: Option[String] = None,
                           discountPoints: Option[String] = None,
                           lenderCredits: Option[String] = None)
-
-object LoanDisclosure {
-  def empty: LoanDisclosure = {
-    LoanDisclosure("", "")
-  }
-}

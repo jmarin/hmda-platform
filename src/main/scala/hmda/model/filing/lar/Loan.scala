@@ -12,16 +12,3 @@ case class Loan(
     amount: Double,
     loanTerm: String
 )
-
-object Loan {
-  def empty: Loan = {
-    Loan(None,
-         "",
-         Conventional,
-         HomePurchase,
-         SiteBuilt,
-         PrincipalResidence,
-         0.0,
-         "")
-  }
-}

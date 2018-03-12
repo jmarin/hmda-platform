@@ -9,13 +9,3 @@ case class Denial(
     denialReason4: DenialReasonEnum,
     otherDenialReason: String
 )
-
-object Denial {
-  def empty: Denial = {
-    Denial(DenialReasonNotApplicable,
-           DenialReasonNotApplicable,
-           DenialReasonNotApplicable,
-           DenialReasonNotApplicable,
-           "")
-  }
-}
