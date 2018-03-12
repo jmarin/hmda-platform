@@ -18,83 +18,59 @@ object LarGenerators {
 
   implicit def larGen: Gen[LoanApplicationRegister] = {
     for {
-      lei <- Gen.option(stringOfN(20, Gen.alphaChar))
+      larId <- larIdentifierGen
       loan <- loanGen
-      preapproval <- preapprovalEnumGen
-      actionTakenType <- actionTakenTypeEnumGen
-      actionTakenDate <- dateGen
+      larAction <- larActionGen
       geography <- geographyGen
       applicant <- applicantGen
       coApplicant <- applicantGen
       income <- Gen.alphaStr
       purchaserType <- purchaserEnumGen
-      rateSpread <- valueOrNA(Gen.choose(0.0, 1.0))
       hoepaStatus <- hOEPAStatusEnumGen
       lienStatus <- lienStatusEnumGen
       denial <- denialGen
       loanDisclosure <- loanDisclosureGen
-      interestRate <- Gen.option(valueOrNA(Gen.choose(0.0, 30.0)))
-      prepaymentPenaltyTerm <- valueOrNA(Gen.alphaNumStr)
-      debtToIncomeRatio <- Gen.option(Gen.alphaStr)
-      loanToValueRatio <- Gen.option(valueOrNA(Gen.choose(0.0, 100.0)))
-      introductoryRatePeriod <- valueOrNA(Gen.alphaNumStr)
       otherNonAmortizingFeatures <- otherNonAmortizingFeaturesGen
-      propertyValue <- valueOrNA(Gen.alphaNumStr)
-      manufacturedHomeSecuredProperty <- Gen.option(
-        manufacturedHomeSecuredPropertyEnumGen)
-      manufacturedHomeLandPropertyInterest <- Gen.option(
-        manufacturedHomeLandPropertyInterestEnumGen)
-      totalUnits <- Gen.option(Gen.choose(1, 100))
-      multiFamilyAffordableUnits <- Gen.option(valueOrNA(Gen.choose(1, 1000)))
+      property <- propertyGen
       applicationSubmission <- applicationSubmissionEnumGen
       payableToInstitution <- payableToInstitutionEnumGen
-      nmlsrIdentifier <- valueOrNA(Gen.alphaNumStr)
       aus <- Gen.option(automatedUnderwritingSystemGen)
-      otherAUS <- Gen.option(Gen.alphaStr)
       ausResult <- Gen.option(automatedUnderwritingSystemResultGen)
-      otherAusResult <- Gen.option(Gen.alphaStr)
       reverseMortgage <- Gen.option(mortgageTypeEnum)
       lineOfCredit <- Gen.option(lineOfCreditEnumGen)
       businessOrCommercialPurpose <- Gen.option(
         businessOrCommercialBusinessEnumGen)
     } yield
       LoanApplicationRegister(
-        2,
-        lei,
+        larId,
         loan,
-        preapproval,
-        actionTakenType,
-        actionTakenDate,
+        larAction,
         geography,
         applicant,
         coApplicant,
         income,
         purchaserType,
-        rateSpread,
         hoepaStatus,
         lienStatus,
         denial,
         loanDisclosure,
-        interestRate,
-        prepaymentPenaltyTerm,
-        debtToIncomeRatio,
-        loanToValueRatio,
-        introductoryRatePeriod,
         otherNonAmortizingFeatures,
-        propertyValue,
-        manufacturedHomeSecuredProperty,
-        manufacturedHomeLandPropertyInterest,
-        totalUnits,
-        multiFamilyAffordableUnits,
+        property,
         applicationSubmission,
         payableToInstitution,
-        nmlsrIdentifier,
         aus,
         ausResult,
         reverseMortgage,
         lineOfCredit,
         businessOrCommercialPurpose
       )
+  }
+
+  implicit def larIdentifierGen: Gen[LarIdentifier] = {
+    for {
+      lei <- Gen.option(stringOfN(20, Gen.alphaChar))
+      nmlsrIdentifier <- valueOrNA(Gen.alphaNumStr)
+    } yield LarIdentifier(2, lei, nmlsrIdentifier)
   }
 
   implicit def loanGen: Gen[Loan] = {
@@ -107,15 +83,37 @@ object LarGenerators {
       occupancy <- occupancyEnumGen
       amount <- Gen.choose(0.0, Double.MaxValue)
       term <- valueOrNA(Gen.choose(0.0, Double.MaxValue))
+      rateSpread <- valueOrNA(Gen.choose(0.0, 1.0))
+      interestRate <- Gen.option(valueOrNA(Gen.choose(0.0, 30.0)))
+      prepaymentPenaltyTerm <- valueOrNA(Gen.alphaNumStr)
+      debtToIncomeRatio <- Gen.option(Gen.alphaStr)
+      loanToValueRatio <- Gen.option(valueOrNA(Gen.choose(0.0, 100.0)))
+      introductoryRatePeriod <- valueOrNA(Gen.alphaNumStr)
     } yield
-      Loan(uli,
-           applicationDate,
-           loanType,
-           loanPurpose,
-           constructionMethod,
-           occupancy,
-           amount,
-           term)
+      Loan(
+        uli,
+        applicationDate,
+        loanType,
+        loanPurpose,
+        constructionMethod,
+        occupancy,
+        amount,
+        term,
+        rateSpread,
+        interestRate,
+        prepaymentPenaltyTerm,
+        debtToIncomeRatio,
+        loanToValueRatio,
+        introductoryRatePeriod
+      )
+  }
+
+  implicit def larActionGen: Gen[LarAction] = {
+    for {
+      preapproval <- preapprovalEnumGen
+      actionTakenType <- actionTakenTypeEnumGen
+      actionTakenDate <- dateGen
+    } yield LarAction(preapproval, actionTakenType, actionTakenDate)
   }
 
   implicit def loanDisclosureGen: Gen[LoanDisclosure] = {
@@ -169,6 +167,25 @@ object LarGenerators {
         otherNonAmortizingFeatures
       )
     }
+  }
+
+  implicit def propertyGen: Gen[Property] = {
+    for {
+      propertyValue <- valueOrNA(Gen.alphaNumStr)
+      manufacturedHomeSecuredProperty <- Gen.option(
+        manufacturedHomeSecuredPropertyEnumGen)
+      manufacturedHomeLandPropertyInterest <- Gen.option(
+        manufacturedHomeLandPropertyInterestEnumGen)
+      totalUnits <- Gen.option(Gen.choose(1, 100))
+      multiFamilyAffordableUnits <- Gen.option(valueOrNA(Gen.choose(1, 1000)))
+    } yield
+      Property(
+        propertyValue,
+        manufacturedHomeSecuredProperty,
+        manufacturedHomeLandPropertyInterest,
+        totalUnits,
+        multiFamilyAffordableUnits
+      )
   }
 
   implicit def stateCodeGen: Gen[String] = {

@@ -10,5 +10,11 @@ case class Loan(
     constructionMethod: ConstructionMethodEnum,
     occupancy: OccupancyEnum,
     amount: Double,
-    loanTerm: String
+    loanTerm: String,
+    rateSpread: String,
+    interestRate: Option[String] = None,
+    prepaymentPenaltyTerm: String,
+    debtToIncomeRatio: Option[String] = None,
+    loanToValueRatio: Option[String] = None,
+    introductoryRatePeriod: String
 )
