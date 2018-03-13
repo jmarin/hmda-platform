@@ -8,12 +8,7 @@ import ApplicantFormatValidator._
 import cats.data.NonEmptyList
 import cats.data.Validated.Invalid
 import hmda.model.filing.lar.Applicant
-import hmda.parser.filing.lar.LarParserErrorModel.{
-  InvalidAge,
-  InvalidEthnicity,
-  InvalidRace,
-  InvalidSex
-}
+import hmda.parser.filing.lar.LarParserErrorModel._
 
 class ApplicantFormatValidatorSpec
     extends PropSpec
@@ -48,12 +43,22 @@ class ApplicantFormatValidatorSpec
     }
   }
 
-  property("Applicant must report Invalid age for non numeric age field") {
+  property("Applicant must report Invalid Age for non numeric age field") {
     forAll(larGen) { lar =>
       val applicant = lar.applicant
       val badValues = extractValues(applicant).updated(18, "xx")
       validateApplicantValues(badValues) mustBe Invalid(
         NonEmptyList.of(InvalidAge)
+      )
+    }
+  }
+
+  property("Applicant must report Invalid Credit Score for non numeric field") {
+    forAll(larGen) { lar =>
+      val applicant = lar.applicant
+      val badValues = extractValues(applicant).updated(20, "a")
+      validateApplicantValues(badValues) mustBe Invalid(
+        NonEmptyList.of(InvalidCreditScore)
       )
     }
   }
