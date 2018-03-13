@@ -7,7 +7,13 @@ import LarValidationUtils._
 import ApplicantFormatValidator._
 import cats.data.NonEmptyList
 import cats.data.Validated.Invalid
-import hmda.parser.filing.lar.LarParserErrorModel.InvalidEthnicity
+import hmda.model.filing.lar.Applicant
+import hmda.parser.filing.lar.LarParserErrorModel.{
+  InvalidAge,
+  InvalidEthnicity,
+  InvalidRace,
+  InvalidSex
+}
 
 class ApplicantFormatValidatorSpec
     extends PropSpec
@@ -19,31 +25,100 @@ class ApplicantFormatValidatorSpec
     forAll(larGen) { lar =>
       val applicant = lar.applicant
       val badValues = extractValues(applicant).updated(0, "a")
-      validateApplicant(
-        ethnicity1 = badValues(0),
-        ethnicity2 = badValues(1),
-        ethnicity3 = badValues(2),
-        ethnicity4 = badValues(3),
-        ethnicity5 = badValues(4),
-        otherHispanicOrLatino = badValues(5),
-        ethnicityObserved = badValues(6),
-        race1 = badValues(7),
-        race2 = badValues(8),
-        race3 = badValues(9),
-        race4 = badValues(10),
-        race5 = badValues(11),
-        otherNative = badValues(12),
-        otherAsian = badValues(13),
-        otherPacific = badValues(14),
-        raceObserved = badValues(15),
-        sex = badValues(16),
-        sexObserved = badValues(17),
-        age = badValues(18),
-        creditScore = badValues(19),
-        creditScoreModel = badValues(20),
-        otherCreditScore = badValues(21)
-      ) mustBe Invalid(NonEmptyList.of(InvalidEthnicity))
+      validateApplicantValues(badValues) mustBe Invalid(
+        NonEmptyList.of(InvalidEthnicity))
     }
+  }
+
+  property("Applicant must report Invalid Race for non numeric race field") {
+    forAll(larGen) { lar =>
+      val applicant = lar.applicant
+      val badValues = extractValues(applicant).updated(7, "a")
+      validateApplicantValues(badValues) mustBe Invalid(
+        NonEmptyList.of(InvalidRace))
+    }
+  }
+
+  property("Applicant must report Invalid Sex for non numeric sex field") {
+    forAll(larGen) { lar =>
+      val applicant = lar.applicant
+      val badValues = extractValues(applicant).updated(16, "o")
+      validateApplicantValues(badValues) mustBe Invalid(
+        NonEmptyList.of(InvalidSex))
+    }
+  }
+
+  property("Applicant must report Invalid age for non numeric age field") {
+    forAll(larGen) { lar =>
+      val applicant = lar.applicant
+      val badValues = extractValues(applicant).updated(18, "xx")
+      validateApplicantValues(badValues) mustBe Invalid(
+        NonEmptyList.of(InvalidAge)
+      )
+    }
+  }
+
+  property("Applicant must accumulate parsing errors") {
+    forAll(larGen) { lar =>
+      val applicant = lar.applicant
+      val badValues = extractValues(applicant)
+        .updated(0, "a")
+        .updated(7, "b")
+        .updated(16, "oh")
+      validateApplicantValues(badValues) mustBe Invalid(
+        NonEmptyList.of(InvalidEthnicity, InvalidRace, InvalidSex)
+      )
+    }
+  }
+
+  private def validateApplicantValues(
+      values: Seq[String]): LarParserValidationResult[Applicant] = {
+    val ethnicity1 = values(0)
+    val ethnicity2 = values(1)
+    val ethnicity3 = values(2)
+    val ethnicity4 = values(3)
+    val ethnicity5 = values(4)
+    val otherHispanicOrLatino = values(5)
+    val ethnicityObserved = values(6)
+    val race1 = values(7)
+    val race2 = values(8)
+    val race3 = values(9)
+    val race4 = values(10)
+    val race5 = values(11)
+    val otherNative = values(12)
+    val otherAsian = values(13)
+    val otherPacific = values(14)
+    val raceObserved = values(15)
+    val sex = values(16)
+    val sexObserved = values(17)
+    val age = values(18)
+    val creditScore = values(19)
+    val creditScoreModel = values(20)
+    val otherCreditScore = values(21)
+    validateApplicant(
+      ethnicity1,
+      ethnicity2,
+      ethnicity3,
+      ethnicity4,
+      ethnicity5,
+      otherHispanicOrLatino,
+      ethnicityObserved,
+      race1,
+      race2,
+      race3,
+      race4,
+      race5,
+      otherNative,
+      otherAsian,
+      otherPacific,
+      raceObserved,
+      sex,
+      sexObserved,
+      age,
+      creditScore,
+      creditScoreModel,
+      otherCreditScore
+    )
   }
 
 }
