@@ -70,7 +70,7 @@ case class LoanApplicationRegister(
 
     s"${larIdentifier.id}|${larIdentifier.LEI.getOrElse("")}|${loan.ULI.getOrElse(
       "")}|${loan.applicationDate}|${loan.loanType.code}|${loan.loanPurpose.code}|${action.preapproval.code}|" +
-      s"${loan.constructionMethod.code}|${loan.occupancy.code}|${loan.amount}|${action.actionTakenType.code}|$action.actionTakenDate|" +
+      s"${loan.constructionMethod.code}|${loan.occupancy.code}|${loan.amount}|${action.actionTakenType.code}|${action.actionTakenDate}|" +
       s"${geography.street}|${geography.city}|${geography.state}|${geography.zipCode}|${geography.county}|${geography.tract}|" +
       s"${applicant.ethnicity.ethnicity1.code}|${applicant.ethnicity.ethnicity2.code}|${applicant.ethnicity.ethnicity3.code}|" +
       s"${applicant.ethnicity.ethnicity4.code}|${applicant.ethnicity.ethnicity5.code}|${applicant.ethnicity.otherHispanicOrLatino}|" +

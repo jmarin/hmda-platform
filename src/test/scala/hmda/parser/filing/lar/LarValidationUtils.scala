@@ -5,8 +5,8 @@ import hmda.model.filing.lar._
 object LarValidationUtils {
 
   def extractValues(lar: LoanApplicationRegister): Seq[String] = {
-
-    List()
+    val values = lar.toCSV.mkString("|")
+    List(values)
   }
 
   def extractValues(applicant: Applicant): Seq[String] = {
@@ -22,7 +22,7 @@ object LarValidationUtils {
 
   }
 
-  def extractEthnicityValues(ethnicity: Ethnicity): Seq[String] = {
+  private def extractEthnicityValues(ethnicity: Ethnicity): Seq[String] = {
     val eth1 = ethnicity.ethnicity1.code.toString
     val eth2 = ethnicity.ethnicity2.code.toString
     val eth3 = ethnicity.ethnicity3.code.toString
@@ -41,7 +41,7 @@ object LarValidationUtils {
     )
   }
 
-  def extractRaceValues(race: Race): Seq[String] = {
+  private def extractRaceValues(race: Race): Seq[String] = {
     val race1 = race.race1.code.toString
     val race2 = race.race2.code.toString
     val race3 = race.race3.code.toString
@@ -64,7 +64,7 @@ object LarValidationUtils {
     )
   }
 
-  def extractSexValues(sex: Sex): Seq[String] = {
+  private def extractSexValues(sex: Sex): Seq[String] = {
     val sexStr = sex.sexEnum.code.toString
     val sexObserved = sex.sexObservedEnum.code.toString
     List(
