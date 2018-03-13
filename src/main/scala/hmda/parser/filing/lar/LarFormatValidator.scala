@@ -1,28 +1,12 @@
 package hmda.parser.filing.lar
 
-import cats.data.ValidatedNel
-import com.typesafe.config.ConfigFactory
-import hmda.model.filing.lar._
-import hmda.parser.ParserErrorModel.{
-  IncorrectNumberOfFields,
-  ParserValidationError
-}
+import hmda.parser.ParserErrorModel.IncorrectNumberOfFields
 import cats.implicits._
 import hmda.model.filing.lar.enums._
 import hmda.parser.filing.lar.LarParserErrorModel._
 import ApplicantFormatValidator._
-
-import scala.util.{Failure, Success, Try}
-
-case class TempLAR(
-    id: Int,
-    LEI: String,
-    ULI: Option[String],
-    applicationDate: Int,
-    geography: Geography,
-    preapprovalEnum: PreapprovalEnum,
-    actionTakenTypeEnum: ActionTakenTypeEnum
-)
+import com.typesafe.config.ConfigFactory
+import hmda.model.filing.lar._
 
 sealed trait LarFormatValidator extends LarParser {
 
@@ -377,19 +361,24 @@ sealed trait LarFormatValidator extends LarParser {
   ) = {
 
     (
-      validateIntField(id, InvalidId),
-      validateMaybeStr(lei),
-      validateLoan(uli,
-                   applicationDate,
-                   loanType,
-                   loanPurpose,
-                   constructionMethod,
-                   occupancy,
-                   loanAmount,
-                   loanTerm),
-      validateLarCode(PreapprovalEnum, preapproval, InvalidPreapproval),
-      validateLarCode(ActionTakenTypeEnum, actionTaken, InvalidActionTaken),
-      validateIntField(actionTakenDate, InvalidActionTakenDate),
+      validateLarIdentifier(id, lei, nmlsrIdentifier),
+      validateLoan(
+        uli,
+        applicationDate,
+        loanType,
+        loanPurpose,
+        constructionMethod,
+        occupancy,
+        loanAmount,
+        loanTerm,
+        rateSpread,
+        interestRate,
+        prepaymentPenaltyTerm,
+        debtToIncomeRatio,
+        loanToValueRatio,
+        introductoryRatePeriod
+      ),
+      validateLarAction(preapproval, actionTaken, actionTakenDate),
       validateGeography(street, city, state, zipCode, county, tract),
       validateApplicant(
         appEth1,
@@ -441,7 +430,6 @@ sealed trait LarFormatValidator extends LarParser {
       ),
       validateStrOrNAField(income, InvalidIncome),
       validateLarCode(PurchaserEnum, purchaserType, InvalidPurchaserType),
-      validateStrOrNAField(rateSpread, InvalidRateSpread),
       validateLarCode(HOEPAStatusEnum, hoepaStatus, InvalidHoepaStatus),
       validateLarCode(LienStatusEnum, lienStatus, InvalidLienStatus),
       validateDenial(denial1, denial2, denial3, denial4, denialOther),
@@ -450,43 +438,50 @@ sealed trait LarFormatValidator extends LarParser {
                              originationCharges,
                              discountPoints,
                              lenderCredits),
-      validateMaybeStrOrNAField(interestRate, InvalidInterestRate),
-      validateStrOrNAField(prepaymentPenaltyTerm, InvalidPrepaymentPenaltyTerm),
-      validateMaybeStrOrNAField(debtToIncomeRatio, InvalidDebtToIncomeRatio),
-      validateMaybeStrOrNAField(loanToValueRatio, InvalidLoanToValueRatio),
-      validateMaybeStrOrNAField(introductoryRatePeriod,
-                                InvalidIntroductoryRatePeriod),
       validateNonAmortizingFeatures(balloonPayment,
                                     interestOnlyPayment,
                                     negativeAmortization,
                                     otherNonAmortizingFeatures),
-      validateStrOrNAField(propertyValue, InvalidPropertyValue),
-      validateLarCode(ManufacturedHomeSecuredPropertyEnum,
-                      manufacturedHomeSecuredProperty,
-                      InvalidManufacturedHomeSecuredProperty).map(x => Some(x)),
-      validateLarCode(ManufacturedHomeLandPropertyInterestEnum,
-                      manufacturedHomeLandPropertyInterest,
-                      InvalidManufacturedHomeLandPropertyInterest).map(x =>
-        Some(x)),
-      validateIntField(totalUnits, InvalidTotalUnits).map(i => Some(i)),
-      validateStrOrNAField(multifamilyAffordableUnits, InvalidMultifamilyUnits),
+      validateProperty(propertyValue,
+                       manufacturedHomeSecuredProperty,
+                       manufacturedHomeLandPropertyInterest,
+                       totalUnits,
+                       multifamilyAffordableUnits),
       validateLarCode(ApplicationSubmissionEnum,
                       submissionOfApplication,
                       InvalidApplicationSubmission),
       validateLarCode(PayableToInstitutionEnum,
                       payableToInstitution,
                       InvalidPayableToInstitution),
-      validateStrOrNAField(nmlsrIdentifier, InvalidNMLSRIdentifier),
-      validateAUS(aus1, aus2, aus3, aus4, aus5, ausOther).map(x => Some(x)),
-      validateLarCode(MortgageTypeEnum, reverseMortgage, InvalidMortgageType)
-        .map(x => Some(x)),
-      validateLarCode(LineOfCreditEnum,
-                      openEndLineOfCredit,
-                      InvalidLineOfCredit).map(x => Some(x)),
-      validateLarCode(BusinessOrCommercialBusinessEnum,
-                      businessOrCommercial,
-                      InvalidBusinessOrCommercial)
+      validateAus(aus1, aus2, aus3, aus4, aus5, ausOther),
+      validateAusResult(ausResult1,
+                        ausResult2,
+                        ausResult3,
+                        ausResult4,
+                        ausResult5,
+                        ausResultOther),
+      validateMaybeLarCode(MortgageTypeEnum,
+                           reverseMortgage,
+                           InvalidMortgageType),
+      validateMaybeLarCode(LineOfCreditEnum,
+                           openEndLineOfCredit,
+                           InvalidLineOfCredit),
+      validateMaybeLarCode(BusinessOrCommercialBusinessEnum,
+                           businessOrCommercial,
+                           InvalidBusinessOrCommercial)
     ).mapN(LoanApplicationRegister)
+  }
+
+  private def validateLarIdentifier(
+      id: String,
+      LEI: String,
+      NMLSRIdentifier: String
+  ): LarParserValidationResult[LarIdentifier] = {
+    (
+      validateIntField(id, InvalidId),
+      validateMaybeStr(LEI),
+      validateStrOrNAField(NMLSRIdentifier, InvalidNMLSRIdentifier)
+    ).mapN(LarIdentifier)
   }
 
   private def validateLoan(
@@ -497,7 +492,13 @@ sealed trait LarFormatValidator extends LarParser {
       constructionMethod: String,
       occupancy: String,
       amount: String,
-      loanTerm: String
+      loanTerm: String,
+      rateSpread: String,
+      interestRate: String,
+      prepaymentPenalty: String,
+      debtToIncome: String,
+      loanToValue: String,
+      introductoryRate: String
   ): LarParserValidationResult[Loan] = {
     (
       validateMaybeStr(uli),
@@ -509,8 +510,25 @@ sealed trait LarFormatValidator extends LarParser {
                       InvalidConstructionMethod),
       validateLarCode(OccupancyEnum, occupancy, InvalidOccupancy),
       validateDoubleField(amount, InvalidAmount),
-      validateStr(loanTerm)
+      validateStr(loanTerm),
+      validateStrOrNAField(rateSpread, InvalidRateSpread),
+      validateMaybeStrOrNAField(interestRate, InvalidInterestRate),
+      validateStrOrNAField(prepaymentPenalty, InvalidPrepaymentPenaltyTerm),
+      validateMaybeStrOrNAField(debtToIncome, InvalidDebtToIncomeRatio),
+      validateMaybeStrOrNAField(loanToValue, InvalidLoanToValueRatio),
+      validateStrOrNAField(introductoryRate, InvalidIntroductoryRatePeriod)
     ).mapN(Loan)
+  }
+
+  private def validateLarAction(
+      preapproval: String,
+      actionTaken: String,
+      actionDate: String): LarParserValidationResult[LarAction] = {
+    (
+      validateLarCode(PreapprovalEnum, preapproval, InvalidPreapproval),
+      validateLarCode(ActionTakenTypeEnum, actionTaken, InvalidActionTaken),
+      validateIntField(actionDate, InvalidActionTakenDate)
+    ).mapN(LarAction)
   }
 
   private def validateGeography(
@@ -581,35 +599,91 @@ sealed trait LarFormatValidator extends LarParser {
                       otherNonAmortizingFeatures,
                       InvalidOtherNonAmortizingFeatures)
     ).mapN(NonAmortizingFeatures)
+  }
+
+  private def validateProperty(
+      propertyValue: String,
+      manufacturedHomeSecuredProperty: String,
+      manufacturedHomeLandPropertyInterest: String,
+      totalUnits: String,
+      multifamilyUnits: String
+  ): LarParserValidationResult[Property] = {
+    (
+      validateStrOrNAField(propertyValue, InvalidPropertyValue),
+      validateMaybeLarCode(ManufacturedHomeSecuredPropertyEnum,
+                           manufacturedHomeSecuredProperty,
+                           InvalidManufacturedHomeSecuredProperty),
+      validateMaybeLarCode(ManufacturedHomeLandPropertyInterestEnum,
+                           manufacturedHomeLandPropertyInterest,
+                           InvalidManufacturedHomeLandPropertyInterest),
+      validateMaybeIntField(totalUnits, InvalidTotalUnits),
+      validateMaybeStrOrNAField(multifamilyUnits, InvalidMultifamilyUnits)
+    ).mapN(Property)
 
   }
 
-  private def validateAUS(
+  private def validateAus(
       aus1: String,
       aus2: String,
       aus3: String,
       aus4: String,
       aus5: String,
       otherAus: String
-  ): LarParserValidationResult[AutomatedUnderwritingSystem] = {
-    (
-      validateLarCode(AutomatedUnderwritingSystemEnum,
-                      aus1,
-                      InvalidAutomatedUnderwritingSystem),
-      validateLarCode(AutomatedUnderwritingSystemEnum,
-                      aus2,
-                      InvalidAutomatedUnderwritingSystem),
-      validateLarCode(AutomatedUnderwritingSystemEnum,
-                      aus3,
-                      InvalidAutomatedUnderwritingSystem),
-      validateLarCode(AutomatedUnderwritingSystemEnum,
-                      aus4,
-                      InvalidAutomatedUnderwritingSystem),
-      validateLarCode(AutomatedUnderwritingSystemEnum,
-                      aus5,
-                      InvalidAutomatedUnderwritingSystem),
-      validateMaybeStr(otherAus)
-    ).mapN(AutomatedUnderwritingSystem)
+  ): LarParserValidationResult[Option[AutomatedUnderwritingSystem]] = {
+    if (aus1 == "" && aus2 == "" && aus3 == "" && aus4 == "" && aus5 == "" && otherAus == "") {
+      None.validNel
+    } else {
+      (
+        validateLarCode(AutomatedUnderwritingSystemEnum,
+                        aus1,
+                        InvalidAutomatedUnderwritingSystem),
+        validateLarCode(AutomatedUnderwritingSystemEnum,
+                        aus2,
+                        InvalidAutomatedUnderwritingSystem),
+        validateLarCode(AutomatedUnderwritingSystemEnum,
+                        aus3,
+                        InvalidAutomatedUnderwritingSystem),
+        validateLarCode(AutomatedUnderwritingSystemEnum,
+                        aus4,
+                        InvalidAutomatedUnderwritingSystem),
+        validateLarCode(AutomatedUnderwritingSystemEnum,
+                        aus5,
+                        InvalidAutomatedUnderwritingSystem),
+        validateMaybeStr(otherAus)
+      ).mapN(AutomatedUnderwritingSystem).map(x => Some(x))
+    }
+  }
+
+  private def validateAusResult(
+      ausResult1: String,
+      ausResult2: String,
+      ausResult3: String,
+      ausResult4: String,
+      ausResult5: String,
+      otherAusResult: String
+  ): LarParserValidationResult[Option[AutomatedUnderwritingSystemResult]] = {
+    if (ausResult1 == "" && ausResult2 == "" && ausResult3 == "" && ausResult4 == "" && ausResult5 == "" && otherAusResult == "") {
+      None.validNel
+    } else {
+      (
+        validateLarCode(AutomatedUnderwritingResultEnum,
+                        ausResult1,
+                        InvalidAutomatedUnderwritingSystemResult),
+        validateLarCode(AutomatedUnderwritingResultEnum,
+                        ausResult2,
+                        InvalidAutomatedUnderwritingSystemResult),
+        validateLarCode(AutomatedUnderwritingResultEnum,
+                        ausResult3,
+                        InvalidAutomatedUnderwritingSystemResult),
+        validateLarCode(AutomatedUnderwritingResultEnum,
+                        ausResult4,
+                        InvalidAutomatedUnderwritingSystemResult),
+        validateLarCode(AutomatedUnderwritingResultEnum,
+                        ausResult5,
+                        InvalidAutomatedUnderwritingSystemResult),
+        validateMaybeStr(otherAusResult)
+      ).mapN(AutomatedUnderwritingSystemResult).map(x => Some(x))
+    }
   }
 
 }

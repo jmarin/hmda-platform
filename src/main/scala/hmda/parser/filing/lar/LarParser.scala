@@ -19,6 +19,18 @@ trait LarParser {
     }
   }
 
+  def validateMaybeIntField(value: String,
+                            parserValidationError: ParserValidationError)
+    : LarParserValidationResult[Option[Int]] = {
+    if (value == "") {
+      None.validNel
+    }
+    Try(value.toInt) match {
+      case Success(i) => Some(i).validNel
+      case Failure(_) => parserValidationError.invalidNel
+    }
+  }
+
   def validateDoubleField(value: String,
                           parserValidationError: ParserValidationError)
     : LarParserValidationResult[Double] = {
@@ -73,6 +85,22 @@ trait LarParser {
       case Success(enum) => enum.validNel
       case Failure(_)    => parserValidationError.invalidNel
     }
+  }
+
+  def validateMaybeLarCode[A](larCodeEnum: LarCodeEnum[A],
+                              value: String,
+                              parserValidationError: ParserValidationError)
+    : LarParserValidationResult[Option[A]] = {
+
+    if (value == "") {
+      None.validNel
+    } else {
+      Try(larCodeEnum.valueOf(value.toInt)) match {
+        case Success(enum) => Some(enum).validNel
+        case Failure(_)    => parserValidationError.invalidNel
+      }
+    }
+
   }
 
 }

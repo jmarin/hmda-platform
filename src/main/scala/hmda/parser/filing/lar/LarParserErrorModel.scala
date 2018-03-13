@@ -191,6 +191,12 @@ object LarParserErrorModel {
       notAnInteger("automated underwriting system")
   }
 
+  case object InvalidAutomatedUnderwritingSystemResult
+      extends ParserValidationError {
+    override def errorMessage: String =
+      notAnInteger("automated underwriting result")
+  }
+
   case object InvalidMortgageType extends ParserValidationError {
     override def errorMessage: String = notAnInteger("mortgage type")
   }
