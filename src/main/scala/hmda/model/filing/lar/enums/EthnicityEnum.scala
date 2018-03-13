@@ -17,7 +17,7 @@ object EthnicityEnum extends LarCodeEnum[EthnicityEnum] {
       case 3  => InformationNotProvided
       case 4  => EthnicityNotApplicable
       case 5  => EthnicityNoCoApplicant
-      case _  => throw new Exception("Invalid Ethnicity Code")
+      case _  => InvalidEthnicityValue
     }
   }
 }
@@ -71,4 +71,10 @@ case object EthnicityNotApplicable extends EthnicityEnum {
 case object EthnicityNoCoApplicant extends EthnicityEnum {
   override val code: Int = 5
   override val description: String = "No co-applicant"
+}
+
+case object InvalidEthnicityValue extends EthnicityEnum {
+  override def code: Int = -1
+
+  override def description: String = "Invalid Ethnicity Value"
 }
