@@ -75,6 +75,5 @@ case object EthnicityNoCoApplicant extends EthnicityEnum {
 
 case object InvalidEthnicityValue extends EthnicityEnum {
   override def code: Int = -1
-
-  override def description: String = "Invalid Ethnicity Value"
+  override def description: String = "Invalid Code"
 }
