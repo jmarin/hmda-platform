@@ -44,10 +44,13 @@ trait LarParser {
                            parserValidationError: ParserValidationError)
     : LarParserValidationResult[String] = {
     if (value == "") {
+      println("found empty value")
       parserValidationError.invalidNel
     } else if (value == "NA") {
+      println("Found NA")
       value.validNel
     } else {
+      println("Value: " + value)
       validateIntField(value, parserValidationError).map(x => x.toString)
     }
   }

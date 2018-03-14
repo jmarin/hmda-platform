@@ -7,6 +7,7 @@ import hmda.model.census.Census
 import org.scalacheck.Gen
 import hmda.model.filing.FilingGenerators._
 import hmda.model.filing.lar.enums.LarEnumGenerators._
+import hmda.parser.filing.lar.TempLAR
 
 import scala.language.implicitConversions
 
@@ -319,7 +320,8 @@ object LarGenerators {
                                         other)
   }
 
-  private def valueOrNA[A](g: Gen[A]): Gen[String] = valueOrDefault("NA")
+  private def valueOrNA[A](g: Gen[A]): Gen[String] =
+    valueOrDefault(Gen.numStr.suchThat(!_.isEmpty), "NA")
 
   private def valueOrDefault[A](g: Gen[A], value: String = "") = {
     Gen.oneOf(g.map(_.toString), Gen.const(value))
