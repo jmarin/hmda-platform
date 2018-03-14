@@ -7,6 +7,9 @@ import LarFormatValidator._
 import cats.data.NonEmptyList
 import cats.data.Validated.Invalid
 import hmda.parser.ParserErrorModel.IncorrectNumberOfFields
+import hmda.model.filing.lar.LarGenerators._
+import LarValidationUtils._
+import hmda.parser.filing.lar.LarParserErrorModel.InvalidId
 
 class LarFormatValidatorSpec
     extends PropSpec
@@ -24,139 +27,143 @@ class LarFormatValidatorSpec
     )
   }
 
-  property("Loan Application Register must report InvalidId for non numeric field value") {
+  property(
+    "Loan Application Register must report InvalidId for non numeric field value") {
+    forAll(larGen) { lar =>
+      val badId = badValue()
+      val values = extractValues(lar).updated(0, badId)
+      validateLar(values) mustBe Invalid(NonEmptyList.of(InvalidId))
+    }
+  }
+
+  property("Invalid Application Date") {
     pending
   }
 
-
-  property("Invalid Application Date"){
+  property("InvalidLoanType") {
     pending
   }
-
-  property("InvalidLoanType"){
+  property("InvalidLoanPurpose") {
     pending
   }
-  property("InvalidLoanPurpose"){
+  property("InvalidPreapproval") {
     pending
   }
-  property("InvalidPreapproval"){
+  property("InvalidConstructionMethod") {
     pending
   }
-  property("InvalidConstructionMethod"){
+  property("InvalidOccupancy") {
     pending
   }
-  property("InvalidOccupancy"){
+  property("InvalidActionTaken") {
     pending
   }
-  property("InvalidActionTaken"){
+  property("InvalidActionTakenDate") {
     pending
   }
-  property("InvalidActionTakenDate"){
+  property("InvalidAmount") {
     pending
   }
-  property("InvalidAmount"){
+  property("InvalidLoanTerm") {
     pending
   }
-  property("InvalidLoanTerm"){
+  property("InvalidIncome") {
     pending
   }
-  property("InvalidIncome"){
+  property("InvalidPurchaserType") {
     pending
   }
-  property("InvalidPurchaserType"){
+  property("InvalidRateSpread") {
     pending
   }
-  property("InvalidRateSpread"){
+  property("InvalidHoepaStatus") {
     pending
   }
-  property("InvalidHoepaStatus"){
+  property("InvalidLienStatus") {
     pending
   }
-  property("InvalidLienStatus"){
+  property("InvalidDenial") {
     pending
   }
-  property("InvalidDenial"){
+  property("InvalidTotalLoanCosts") {
     pending
   }
-  property("InvalidTotalLoanCosts"){
+  property("InvalidPointsAndFees") {
     pending
   }
-  property("InvalidPointsAndFees"){
+  property("InvalidOriginationCharges") {
     pending
   }
-  property("InvalidOriginationCharges"){
+  property("InvalidDiscountPoints") {
     pending
   }
-  property("InvalidDiscountPoints"){
+  property("InvalidLenderCredits") {
     pending
   }
-  property("InvalidLenderCredits"){
+  property("InvalidInterestRate") {
     pending
   }
-  property("InvalidInterestRate"){
+  property("InvalidPrepaymentPenaltyTerm") {
     pending
   }
-  property("InvalidPrepaymentPenaltyTerm"){
+  property("InvalidDebtToIncomeRatio") {
     pending
   }
-  property("InvalidDebtToIncomeRatio"){
+  property("InvalidLoanToValueRatio") {
     pending
   }
-  property("InvalidLoanToValueRatio"){
+  property("InvalidIntroductoryRatePeriod") {
     pending
   }
-  property("InvalidIntroductoryRatePeriod"){
+  property("InvalidBalloonPayment") {
     pending
   }
-  property("InvalidBalloonPayment"){
+  property("InvalidInterestOnlyPayment") {
     pending
   }
-  property("InvalidInterestOnlyPayment"){
+  property("InvalidNegativeAmortization") {
     pending
   }
-  property("InvalidNegativeAmortization"){
+  property("InvalidOtherNonAmortizingFeatures") {
     pending
   }
-  property("InvalidOtherNonAmortizingFeatures"){
+  property("InvalidPropertyValue") {
     pending
   }
-  property("InvalidPropertyValue"){
+  property("InvalidManufacturedHomeSecuredProperty") {
     pending
   }
-  property("InvalidManufacturedHomeSecuredProperty"){
+  property("InvalidManufacturedHomeLandPropertyInterest") {
     pending
   }
-  property("InvalidManufacturedHomeLandPropertyInterest"){
+  property("InvalidTotalUnits") {
     pending
   }
-  property("InvalidTotalUnits"){
+  property("InvalidMultifamilyUnits") {
     pending
   }
-  property("InvalidMultifamilyUnits"){
+  property("InvalidApplicationSubmission") {
     pending
   }
-  property("InvalidApplicationSubmission"){
+  property("InvalidPayableToInstitution") {
     pending
   }
-  property("InvalidPayableToInstitution"){
+  property("InvalidNMLSRIdentifier") {
     pending
   }
-  property("InvalidNMLSRIdentifier"){
+  property("InvalidAutomatedUnderwritingSystem") {
     pending
   }
-  property("InvalidAutomatedUnderwritingSystem"){
+  property("InvalidAutomatedUnderwritingSystemResult") {
     pending
   }
-  property("InvalidAutomatedUnderwritingSystemResult"){
+  property("InvalidMortgageType") {
     pending
   }
-  property("InvalidMortgageType"){
+  property("InvalidLineOfCredit") {
     pending
   }
-  property("InvalidLineOfCredit"){
-    pending
-  }
-  property("InvalidBusinessOrCommercial"){
+  property("InvalidBusinessOrCommercial") {
     pending
   }
 

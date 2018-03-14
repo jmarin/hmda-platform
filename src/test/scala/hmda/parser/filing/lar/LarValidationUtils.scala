@@ -1,12 +1,13 @@
 package hmda.parser.filing.lar
 
 import hmda.model.filing.lar._
+import org.scalacheck.Gen
 
 object LarValidationUtils {
 
   def extractValues(lar: LoanApplicationRegister): Seq[String] = {
-    val values = lar.toCSV.mkString("|")
-    List(values)
+    val values = lar.toCSV.split('|').map(_.trim)
+    values.toSeq
   }
 
   def extractValues(applicant: Applicant): Seq[String] = {
@@ -73,4 +74,7 @@ object LarValidationUtils {
     )
   }
 
+  def badValue(): String = {
+    Gen.alphaStr.sample.getOrElse("a")
+  }
 }
