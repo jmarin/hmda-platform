@@ -1,0 +1,9 @@
+options:
+  - title: Getting Started
+    url: docs/index.html
+
+  - title: HMDA Platform API V1  
+    url: docs/v1.html
+
+  - title: HMDA Platform API V2
+    url: docs/v2.html

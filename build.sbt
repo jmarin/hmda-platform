@@ -47,6 +47,18 @@ lazy val packageSettings = Seq(
   dependencyOverrides ++= akkaDeps ++ akkaPersistenceDeps ++ akkaHttpDeps
 )
 
+lazy val docsSettings = Seq(
+  micrositeName := "HMDA Platform",
+  micrositeDescription := "HMDA Platform API",
+  micrositeBaseUrl := "api",
+  micrositeDocumentationUrl := "/api/docs/",
+  micrositeOrganizationHomepage := "https://ffiec.cfpb.gov/",
+  micrositeGithubOwner := "cfpb",
+  micrositeGithubRepo := "hmda-platform",
+  micrositeDataDirectory := (resourceDirectory in Compile).value / "microsite" / "data"
+  //autoAPIMappings := true
+)
+
 lazy val hmda = (project in file("."))
   .enablePlugins(JavaServerAppPackaging,
                  sbtdocker.DockerPlugin,
@@ -62,5 +74,12 @@ lazy val hmda = (project in file("."))
     scalafmtSettings,
     dockerSettings,
     packageSettings,
+    dockerSettings,
     libraryDependencies ++= commonDeps ++ akkaDeps ++ akkaPersistenceDeps ++ akkaHttpDeps ++ circeDeps
   )
+  .aggregate(docs)
+
+lazy val docs = (project in file("docs"))
+  .settings(moduleName := "docs")
+  .settings(docsSettings)
+  .enablePlugins(MicrositesPlugin)
