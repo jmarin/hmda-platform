@@ -36,3 +36,4 @@ script:
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+  - if ["$TRAVIS_BRANCH" = "sbt-microsites" -a "$TRAVIS_PULL_REQUEST" = "false"]; then sbt ++$TRAVIS_SCALA_VERSION publishMicrosite; fi
