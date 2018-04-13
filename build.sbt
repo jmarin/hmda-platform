@@ -2,6 +2,7 @@ import Dependencies._
 import BuildSettings._
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
 import microsites._
+import github4s.Github._
 
 lazy val commonDeps = Seq(logback, scalaTest, scalaCheck)
 lazy val akkaDeps = Seq(akkaSlf4J,
@@ -51,13 +52,14 @@ lazy val packageSettings = Seq(
 lazy val docsSettings = Seq(
   micrositeName := "HMDA Platform",
   micrositeDescription := "HMDA Platform",
-  micrositeDocumentationUrl := "/docs/",
+  micrositeBaseUrl := "hmda-platform",
+  micrositeDocumentationUrl := "/hmda-platform/docs/",
   micrositeOrganizationHomepage := "https://ffiec.cfpb.gov/",
-  micrositeGithubOwner := "cfpb",
+  micrositeGithubOwner := "jmarin",
   micrositeGithubRepo := "hmda-platform",
   micrositeDataDirectory := (resourceDirectory in Compile).value / "microsite" / "data",
   micrositePushSiteWith := GitHub4s,
-  //micrositePushSiteWith := GHPagesPlugin,
+  micrositeGithubToken := sys.env.get("GITHUB_TOKEN"),
   micrositeGitterChannel := false,
   micrositeExtraMdFiles := Map(
     file("README.md") -> ExtraMdFileConfig(
