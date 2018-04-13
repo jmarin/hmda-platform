@@ -55,8 +55,9 @@ lazy val docsSettings = Seq(
   micrositeOrganizationHomepage := "https://ffiec.cfpb.gov/",
   micrositeGithubOwner := "cfpb",
   micrositeGithubRepo := "hmda-platform",
-  micrositeDataDirectory := (resourceDirectory in Compile).value / "microsite" / "data"
-  //autoAPIMappings := true
+  micrositeDataDirectory := (resourceDirectory in Compile).value / "microsite" / "data",
+  micrositePushSiteWith := GitHub4s,
+  micrositeGithubToken := getEnvVar("GITHUB_TOKEN")
 )
 
 lazy val hmda = (project in file("."))
