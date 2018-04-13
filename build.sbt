@@ -1,6 +1,7 @@
 import Dependencies._
 import BuildSettings._
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
+import microsites._
 
 lazy val commonDeps = Seq(logback, scalaTest, scalaCheck)
 lazy val akkaDeps = Seq(akkaSlf4J,
@@ -49,15 +50,22 @@ lazy val packageSettings = Seq(
 
 lazy val docsSettings = Seq(
   micrositeName := "HMDA Platform",
-  micrositeDescription := "HMDA Platform API",
-  micrositeBaseUrl := "api",
-  micrositeDocumentationUrl := "/api/docs/",
+  micrositeDescription := "HMDA Platform",
+  micrositeDocumentationUrl := "/docs/",
   micrositeOrganizationHomepage := "https://ffiec.cfpb.gov/",
   micrositeGithubOwner := "cfpb",
   micrositeGithubRepo := "hmda-platform",
   micrositeDataDirectory := (resourceDirectory in Compile).value / "microsite" / "data",
   micrositePushSiteWith := GitHub4s,
-  micrositeGithubToken := getEnvVar("GITHUB_TOKEN")
+  //micrositePushSiteWith := GHPagesPlugin,
+  micrositeGitterChannel := false,
+  micrositeExtraMdFiles := Map(
+    file("README.md") -> ExtraMdFileConfig(
+      "index.md",
+      "home",
+      Map("title" -> "Home", "section" -> "home", "position" -> "0")
+    )
+  )
 )
 
 lazy val hmda = (project in file("."))
