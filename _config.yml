@@ -1,5 +1,5 @@
 name: HMDA Platform
-baseurl: ''
+baseurl: /hmda-platform
 description: HMDA Platform
 highlighter: rouge
 docs: true
