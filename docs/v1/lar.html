@@ -1,0 +1,388 @@
+<html><head><title>HMDA Platform: lar v1</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="docs" /><meta name="description" content="HMDA Platform" /><meta name="og:image" content="/hmda-platform/img/poster.png" /><meta name="og:title" content="HMDA Platform: lar v1" /><meta name="og:site_name" content="HMDA Platform" /><meta name="og:url" content="" /><meta name="og:type" content="website" /><meta name="og:description" content="HMDA Platform" /><link rel="icon" type="image/png" href="/hmda-platform/img/favicon.png" /><meta name="twitter:title" content="HMDA Platform: lar v1" /><meta name="twitter:image" content="img/poster.png" /><meta name="twitter:description" content="HMDA Platform" /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/hmda-platform/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/hmda-platform/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/hmda-platform/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/hmda-platform/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/hmda-platform/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/hmda-platform/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/hmda-platform/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/hmda-platform/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/hmda-platform/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/hmda-platform/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/hmda-platform/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/hmda-platform/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/hmda-platform/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/hmda-platform/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/hmda-platform/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/hmda-platform/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/hmda-platform/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/hmda-platform/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/hmda-platform/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/hmda-platform/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/hmda-platform/highlight/styles/default.css" /><link rel="stylesheet" href="/hmda-platform/css/style.css" /><link rel="stylesheet" href="/hmda-platform/css/palette.css" /><link rel="stylesheet" href="/hmda-platform/css/codemirror.css" /></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/hmda-platform/" class="brand"><div class="brand-wrapper"><span>HMDA Platform</span></div></a></li>   </ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li id="gh-eyes-item" class="hidden-xs"><a href="https://github.com/jmarin/hmda-platform"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li id="gh-stars-item" class="hidden-xs"><a href="https://github.com/jmarin/hmda-platform"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('HMDA Platform HMDA Platform');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('HMDA Platform HMDA Platform');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="jmarin" data-github-repo="hmda-platform"><div class="content-wrapper"><section><h2 id="lar">LAR</h2>
+
+<h3 id="parsing">Parsing</h3>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">/ts/parse</code></p>
+
+    <ul>
+      <li><code class="highlighter-rouge">POST</code> - Returns a JSON representation of a TS, or a list of errors if the TS fails to parse</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Example body:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">1</span><span class="err">|</span><span class="mi">0123456789</span><span class="err">|</span><span class="mi">9</span><span class="err">|</span><span class="mi">201301171330</span><span class="err">|</span><span class="mi">2013</span><span class="err">|</span><span class="mi">12-9379899</span><span class="err">|</span><span class="mi">900</span><span class="err">|MIKES</span><span class="w"> </span><span class="err">SMALL</span><span class="w"> </span><span class="err">BANK</span><span class="w">   </span><span class="err">XXXXXXXXXXX|</span><span class="mi">1234</span><span class="w"> </span><span class="err">Main</span><span class="w"> </span><span class="err">St|Sacramento|CA|</span><span class="mi">99999-9999</span><span class="err">|MIKES</span><span class="w"> </span><span class="err">SMALL</span><span class="w"> </span><span class="err">INC|</span><span class="mi">1234</span><span class="w"> </span><span class="err">Kearney</span><span class="w"> </span><span class="err">St|San</span><span class="w"> </span><span class="err">Francisco|CA|</span><span class="mi">99999-1234</span><span class="err">|Mrs.</span><span class="w"> </span><span class="err">Krabappel|</span><span class="mi">916-999-9999</span><span class="err">|</span><span class="mi">999-753-9999</span><span class="err">|krabappel@gmail.com</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Example response</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"parent"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"San Francisco"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MIKES SMALL INC"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CA"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"zipCode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"99999-1234"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1234 Kearney St"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"activityYear"</span><span class="p">:</span><span class="w"> </span><span class="mi">2013</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"timestamp"</span><span class="p">:</span><span class="w"> </span><span class="mi">201301171330</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"agencyCode"</span><span class="p">:</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"respondent"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Sacramento"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MIKES SMALL BANK   XXXXXXXXXXX"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CA"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"zipCode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"99999-9999"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0123456789"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1234 Main St"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"contact"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Mrs. Krabappel"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"phone"</span><span class="p">:</span><span class="w"> </span><span class="s2">"916-999-9999"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"fax"</span><span class="p">:</span><span class="w"> </span><span class="s2">"999-753-9999"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"krabappel@gmail.com"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"totalLines"</span><span class="p">:</span><span class="w"> </span><span class="mi">900</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"taxId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"12-9379899"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">/lar/parse</code></p>
+
+    <ul>
+      <li><code class="highlighter-rouge">POST</code> - Returns a JSON representation of a LAR, or a list of errors if the LAR fails to parse</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Example body:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">2</span><span class="err">|</span><span class="mi">0</span><span class="err">|</span><span class="mi">1</span><span class="err">|</span><span class="mi">10164</span><span class="w">                    </span><span class="err">|</span><span class="mi">20170224</span><span class="err">|</span><span class="mi">1</span><span class="err">|</span><span class="mi">1</span><span class="err">|</span><span class="mi">3</span><span class="err">|</span><span class="mi">1</span><span class="err">|</span><span class="mi">21</span><span class="err">|</span><span class="mi">3</span><span class="err">|</span><span class="mi">1</span><span class="err">|</span><span class="mi">20170326</span><span class="err">|</span><span class="mi">45460</span><span class="err">|</span><span class="mi">18</span><span class="err">|</span><span class="mi">153</span><span class="err">|</span><span class="mi">0</span><span class="mf">501.00</span><span class="err">|</span><span class="mi">2</span><span class="err">|</span><span class="mi">2</span><span class="err">|</span><span class="mi">5</span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="mi">5</span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="mi">1</span><span class="err">|</span><span class="mi">2</span><span class="err">|</span><span class="mi">31</span><span class="err">|</span><span class="mi">0</span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">|NA</span><span class="w">   </span><span class="err">|</span><span class="mi">2</span><span class="err">|</span><span class="mi">1</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Example reponse</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+    "respondentId": "0",
+    "applicant": {
+        "coSex": 2,
+        "coRace5": "",
+        "coEthnicity": 2,
+        "race2": "",
+        "coRace2": "",
+        "coRace1": 5,
+        "race4": "",
+        "race3": "",
+        "race1": 5,
+        "sex": 1,
+        "coRace3": "",
+        "income": "31",
+        "coRace4": "",
+        "ethnicity": 2,
+        "race5": ""
+    },
+    "hoepaStatus": 2,
+    "agencyCode": 1,
+    "actionTakenType": 1,
+    "denial": {
+        "reason1": "",
+        "reason2": "",
+        "reason3": ""
+    },
+    "rateSpread": "NA",
+    "loan": {
+        "applicationDate": "20170224",
+        "propertyType": 1,
+        "amount": 21,
+        "purpose": 3,
+        "id": "10164",
+        "occupancy": 1,
+        "loanType": 1
+    },
+    "id": 2,
+    "actionTakenDate": 20170326,
+    "geography": {
+        "msa": "45460",
+        "state": "18",
+        "county": "153",
+        "tract": "0501.00"
+    },
+    "lienStatus": 1,
+    "preapprovals": 3,
+    "purchaserType": 0
+}
+</code></pre></div></div>
+
+<p>Example error response</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"lineNumber"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"errorMessages"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"An incorrect number of data fields were reported: 38 data fields were found, when 39 data fields were expected."</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="validation">Validation</h3>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">/ts/validate</code></p>
+
+    <ul>
+      <li><code class="highlighter-rouge">POST</code> - Returns a list of syntactical, validity and/or quality errors.</li>
+    </ul>
+  </li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>Query parameter</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>check</td>
+      <td>String. Valid entries are: “syntactical”, “validity”, “quality”.  If left blank or any other text is entered, will default to all checks.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Example body:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"parent"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"San Francisco"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MIKES SMALL INC"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CA"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"zipCode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"99999-1234"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1234 Kearney St"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"activityYear"</span><span class="p">:</span><span class="w"> </span><span class="mi">2013</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"timestamp"</span><span class="p">:</span><span class="w"> </span><span class="mi">201301171330</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"agencyCode"</span><span class="p">:</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"respondent"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Sacramento"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MIKES SMALL BANK   XXXXXXXXXXX"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CA"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"zipCode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"99999-9999"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0123456789"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1234 Main St"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"contact"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Mrs. Krabappel"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"phone"</span><span class="p">:</span><span class="w"> </span><span class="s2">"916-999-9999"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"fax"</span><span class="p">:</span><span class="w"> </span><span class="s2">"999-753-9999"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"krabappel@gmail.com"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"totalLines"</span><span class="p">:</span><span class="w"> </span><span class="mi">900</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"taxId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"12-9379899"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Example response:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"syntactical"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"validity"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"quality"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">/lar/validate</code></p>
+
+    <ul>
+      <li><code class="highlighter-rouge">POST</code> - Returns a list of syntactical, validity and/or quality errors.  This endpoint omits certain edits that are not relevant to a single LAR.  Edits that are omitted: macro edits, TS-only edits (e.g. Q130), and the following: Q022, S025, S270.</li>
+    </ul>
+  </li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>Query parameter</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>check</td>
+      <td>String. Valid entries are: “syntactical”, “validity”, “quality”.  If left blank or any other text is entered, will default to all checks.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Example body:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"respondentId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"applicant"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"coSex"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"coRace5"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"coEthnicity"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"race2"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"coRace2"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"coRace1"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"race4"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"race3"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"race1"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"sex"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"coRace3"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"income"</span><span class="p">:</span><span class="w"> </span><span class="s2">"31"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"coRace4"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"ethnicity"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"race5"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"hoepaStatus"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"agencyCode"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"actionTakenType"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"denial"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"reason1"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"reason2"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"reason3"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"rateSpread"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NA"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"loan"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"applicationDate"</span><span class="p">:</span><span class="w"> </span><span class="s2">"20170224"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"propertyType"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"amount"</span><span class="p">:</span><span class="w"> </span><span class="mi">21</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"purpose"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10164"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"occupancy"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"loanType"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"actionTakenDate"</span><span class="p">:</span><span class="w"> </span><span class="mi">20170326</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"geography"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"msa"</span><span class="p">:</span><span class="w"> </span><span class="s2">"45460"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"18"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"county"</span><span class="p">:</span><span class="w"> </span><span class="s2">"153"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"tract"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0501.00"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"lienStatus"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"preapprovals"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"purchaserType"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Example response:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"syntactical"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"validity"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"quality"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="parse-and-validate">Parse and Validate</h3>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">/ts/parseAndValidate</code></p>
+
+    <ul>
+      <li><code class="highlighter-rouge">POST</code> - Returns a list of syntactical, validity and/or quality errors.</li>
+    </ul>
+  </li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>Query parameter</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>check</td>
+      <td>String. Valid entries are: “syntactical”, “validity”, “quality”.  If left blank or any other text is entered, will default to all checks.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Example body:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">1</span><span class="err">|</span><span class="mi">0123456789</span><span class="err">|</span><span class="mi">9</span><span class="err">|</span><span class="mi">201301171330</span><span class="err">|</span><span class="mi">2013</span><span class="err">|</span><span class="mi">12-9379899</span><span class="err">|</span><span class="mi">900</span><span class="err">|MIKES</span><span class="w"> </span><span class="err">SMALL</span><span class="w"> </span><span class="err">BANK</span><span class="w">   </span><span class="err">XXXXXXXXXXX|</span><span class="mi">1234</span><span class="w"> </span><span class="err">Main</span><span class="w"> </span><span class="err">St|Sacramento|CA|</span><span class="mi">99999-9999</span><span class="err">|MIKES</span><span class="w"> </span><span class="err">SMALL</span><span class="w"> </span><span class="err">INC|</span><span class="mi">1234</span><span class="w"> </span><span class="err">Kearney</span><span class="w"> </span><span class="err">St|San</span><span class="w"> </span><span class="err">Francisco|CA|</span><span class="mi">99999-1234</span><span class="err">|Mrs.</span><span class="w"> </span><span class="err">Krabappel|</span><span class="mi">916-999-9999</span><span class="err">|</span><span class="mi">999-753-9999</span><span class="err">|krabappel@gmail.com</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Example response:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"syntactical"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"validity"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"quality"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">/lar/parseAndValidate</code></p>
+
+    <ul>
+      <li><code class="highlighter-rouge">POST</code> - Returns a list of syntactical, validity and/or quality errors. This endpoint omits certain edits that are not relevant to a single LAR.  Edits that are omitted: macro edits, TS-only edits (e.g. Q130), and the following: Q022, S025, S270.</li>
+    </ul>
+  </li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>Query parameter</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>check</td>
+      <td>String. Valid entries are: “syntactical”, “validity”, “quality”.  If left blank or any other text is entered, will default to all checks.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Example body:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">2</span><span class="err">|</span><span class="mi">0</span><span class="err">|</span><span class="mi">1</span><span class="err">|</span><span class="mi">10164</span><span class="w">                    </span><span class="err">|</span><span class="mi">20170224</span><span class="err">|</span><span class="mi">1</span><span class="err">|</span><span class="mi">1</span><span class="err">|</span><span class="mi">3</span><span class="err">|</span><span class="mi">1</span><span class="err">|</span><span class="mi">21</span><span class="err">|</span><span class="mi">3</span><span class="err">|</span><span class="mi">1</span><span class="err">|</span><span class="mi">20170326</span><span class="err">|</span><span class="mi">45460</span><span class="err">|</span><span class="mi">18</span><span class="err">|</span><span class="mi">153</span><span class="err">|</span><span class="mi">0</span><span class="mf">501.00</span><span class="err">|</span><span class="mi">2</span><span class="err">|</span><span class="mi">2</span><span class="err">|</span><span class="mi">5</span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="mi">5</span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="mi">1</span><span class="err">|</span><span class="mi">2</span><span class="err">|</span><span class="mi">31</span><span class="err">|</span><span class="mi">0</span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="err">|NA</span><span class="w">   </span><span class="err">|</span><span class="mi">2</span><span class="err">|</span><span class="mi">1</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Example response:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"syntactical"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"validity"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"quality"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+</section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/hmda-platform/highlight/highlight.pack.js"></script><script>hljs.configure({
+languages:['scala','java','bash']
+});
+hljs.initHighlighting();
+             </script><script src="/hmda-platform/js/main.js"></script></body></html>
