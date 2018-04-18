@@ -4,6 +4,18 @@ options:
 
   - title: HMDA Platform API V1  
     url: docs/v1.html
+    menu_section: v1
+
+    nested_options:
+     - title: LAR
+       url: docs/v1/lar.html
+     - title: Institutions
+       url: docs/v1/institutions.html
+     - title: ULI
+       url: docs/v1/uli.html
+     - title: Rate Spread
+       url: docs/v1/rateSpread.html
+
 
   - title: HMDA Platform API V2
     url: docs/v2.html
