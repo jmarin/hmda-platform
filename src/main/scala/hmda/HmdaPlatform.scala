@@ -39,7 +39,9 @@ object HmdaPlatform extends App {
 
   val clusterConfig = runtimeMode match {
     case "dev" => ConfigFactory.parseResources("application-dev.conf").resolve()
-    case _     => config
+    case "dcos" =>
+      ConfigFactory.parseResources("application-dcos.conf").resolve()
+    case _ => config
   }
 
   implicit val system =
@@ -48,8 +50,9 @@ object HmdaPlatform extends App {
   implicit val mat = ActorMaterializer()
   implicit val cluster = Cluster(system)
 
-  if (runtimeMode == "prod") {
-    AkkaManagement(system).start()
+  AkkaManagement(system).start()
+
+  if (runtimeMode == "dcos") {
     ClusterBootstrap(system).start()
   }
 

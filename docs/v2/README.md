@@ -33,7 +33,7 @@ sbt:hmda> reStart
 ```
 
 
-### Building and runnint the .jar
+### Building and running the .jar
 
 * To build JVM artifacts (the default, includes all projects), from the sbt prompt:
 

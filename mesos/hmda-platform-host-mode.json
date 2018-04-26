@@ -70,7 +70,7 @@
   "requirePorts": true,
   "env": {
     "SERVICE_NAME": "hmda2.marathon.mesos",
-    "HMDA_RUNTIME_MODE": "prod",
+    "HMDA_RUNTIME_MODE": "dcos",
     "HMDA_HTTP_PORT": "10001",
     "HMDA_HTTP_ADMIN_PORT": "10002",
     "HMDA_HTTP_PUBLIC_PORT": "10003",
