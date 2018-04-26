@@ -37,10 +37,9 @@ object HmdaPlatform extends App {
 
   log.info(s"HMDA_RUNTIME_MODE: $runtimeMode")
 
-  val clusterConfig = if (runtimeMode == "dev") {
-    ConfigFactory.parseResources("application-dev.conf").resolve()
-  } else {
-    config
+  val clusterConfig = runtimeMode match {
+    case "dev" => ConfigFactory.parseResources("application-dev.conf").resolve()
+    case _     => config
   }
 
   implicit val system =
