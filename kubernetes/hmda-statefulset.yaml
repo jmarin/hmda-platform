@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: hmda
+  name: hmda
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 3
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: hmda
+  serviceName: hmda
+  template:
+    metadata:
+      labels:
+        app: hmda
+    spec:
+      containers:
+      - env:
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: HMDA_RUNTIME_MODE
+          value: kubernetes
+        - name: AKKA_ACTOR_SYSTEM_NAME
+          value: hmda
+        - name: AKKA_REMOTING_BIND_PORT
+          value: "2551"
+        - name: AKKA_REMOTING_BIND_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+          # value: $HOSTNAME.hmda.default.svc.cluster.local
+        - name: AKKA_MANAGEMENT_HTTP_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: AKKA_SEED_NODES
+          value: hmda-0.hmda.default.svc.cluster.local:2551,hmda-1.hmda.default.svc.cluster.local:2551,hmda-2.hmda.default.svc.cluster.local:2551
+        image: jmarin/hmda-platform:latest
+        imagePullPolicy: IfNotPresent
+        name: hmda
+        ports:
+        - containerPort: 2551
+          name: akka-remote
+          protocol: TCP
+        - containerPort: 8080
+          name: filing
+          protocol: TCP
+        - containerPort: 8081
+          name: admin
+          protocol: TCP
+        - containerPort: 8082
+          name: public
+          protocol: TCP
+        - containerPort: 19999
+          name: cluster
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 2551
+          timeoutSeconds: 30
+        resources:
+          limits:
+            cpu: 250m
+            memory: 384Mi
+          requests:
+            cpu: 250m
+            memory: 384Mi
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  updateStrategy:
+    type: OnDelete
+status:
+  replicas: 0

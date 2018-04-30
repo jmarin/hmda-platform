@@ -1,6 +1,7 @@
 import Dependencies._
 import BuildSettings._
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
+import com.typesafe.sbt.packager.docker._
 
 lazy val commonDeps = Seq(logback, scalaTest, scalaCheck)
 lazy val akkaDeps = Seq(akkaSlf4J,
@@ -26,8 +27,24 @@ lazy val dockerSettings = Seq(
   dockerBaseImage := "openjdk:8-jre-alpine",
   dockerExposedPorts := Vector(8080, 8081, 8082, 19999),
   packageName := "hmda-platform",
-  dockerRepository := Some("hmda")
+  dockerRepository := Some("jmarin")
 )
+
+dockerEntrypoint ++= Seq(
+  """-Dakka.remote.netty.tcp.hostname="$(eval "echo $AKKA_REMOTING_BIND_HOST")"""",
+  """-Dakka.remote.netty.tcp.port="$AKKA_REMOTING_BIND_PORT"""",
+  """$(IFS=','; I=0; for NODE in $AKKA_SEED_NODES; do echo "-Dakka.cluster.seed-nodes.$I=akka.tcp://$AKKA_ACTOR_SYSTEM_NAME@$NODE"; I=$(expr $I + 1); done)""",
+  "-Dakka.io.dns.resolver=async-dns",
+  "-Dakka.io.dns.async-dns.resolve-srv=true",
+  "-Dakka.io.dns.async-dns.resolv-conf=on"
+)
+
+dockerCommands :=
+  dockerCommands.value.flatMap {
+    case ExecCmd("ENTRYPOINT", args @ _*) =>
+      Seq(Cmd("ENTRYPOINT", args.mkString(" ")))
+    case v => Seq(v)
+  }
 
 lazy val packageSettings = Seq(
   // removes all jar mappings in universal and appends the fat jar
