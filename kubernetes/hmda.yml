@@ -1,0 +1,71 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: hmda
+  name: hmda
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hmda
+  template:
+    metadata:
+      labels:
+        app: hmda
+        actorSystemName: hmda2
+    spec:
+      containers:
+      - name: hmda
+        image: jmarin/hmda-platform:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: HMDA_RUNTIME_MODE
+          value: kubernetes
+        - name: HOST_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        livenessProbe:
+          tcpSocket:
+            port: 19999
+        ports:
+        # akka remoting
+        - name: remoting
+          containerPort: 2551
+          protocol: TCP
+        # akka-management bootstrap
+        - name: bootstrap
+          containerPort: 8558
+          protocol: TCP
+        # external http
+        - name: akka-mgmt-http
+          containerPort: 19999
+          protocol: TCP
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: hmda-service
+spec:
+  # by setting the clusterIp to None we are a "headless service"
+  # and thus the svc ("service") DNS record for the single IP but the IPs of all nodes that we select
+  #
+  # In other words:
+  #  $ kubectl exec -it $POD -- nslookup hmda-service.default.svc.cluster.local
+  #  Server:		10.0.0.10
+  #  Address:	10.0.0.10#53
+  #
+  #  Name:	hmda-service.default.svc.cluster.local
+  #  Address: 172.17.0.7
+  #  Name:	hmda-service.default.svc.cluster.local
+  #  Address: 172.17.0.8
+  #  Name:	hmda-service.default.svc.cluster.local
+  clusterIP: None
+  selector:
+    app: hmda
+  ports:
+  - protocol: TCP
+    port: 8558
+    targetPort: 8558

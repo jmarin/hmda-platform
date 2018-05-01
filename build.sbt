@@ -4,14 +4,17 @@ import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
 import com.typesafe.sbt.packager.docker._
 
 lazy val commonDeps = Seq(logback, scalaTest, scalaCheck)
-lazy val akkaDeps = Seq(akkaSlf4J,
-                        akkaCluster,
-                        akkaTyped,
-                        akkaStream,
-                        akkaManagement,
-                        akkaManagementClusterBootstrap,
-                        akkaServiceDiscoveryDNS,
-                        akkaClusterHttpManagement)
+lazy val akkaDeps = Seq(
+  akkaSlf4J,
+  akkaCluster,
+  akkaTyped,
+  akkaStream,
+  akkaManagement,
+  akkaManagementClusterBootstrap,
+  akkaServiceDiscoveryDNS,
+  akkaServiceDiscoveryKubernetes,
+  akkaClusterHttpManagement
+)
 lazy val akkaPersistenceDeps = Seq(akkaPersistence, akkaClusterSharding)
 lazy val akkaHttpDeps = Seq(akkaHttp, akkaHttpTestkit, akkaHttpCirce)
 lazy val circeDeps = Seq(circe, circeGeneric)
@@ -24,7 +27,7 @@ lazy val scalafmtSettings = Seq(
 lazy val dockerSettings = Seq(
   Docker / maintainer := "Juan Marin Otero",
   Docker / version := "latest",
-  dockerBaseImage := "openjdk:8-jre-alpine",
+  dockerBaseImage := "openjdk:10-jre-slim",
   dockerExposedPorts := Vector(8080, 8081, 8082, 19999),
   packageName := "hmda-platform",
   dockerRepository := Some("jmarin")
@@ -32,11 +35,7 @@ lazy val dockerSettings = Seq(
 
 dockerEntrypoint ++= Seq(
   """-Dakka.remote.netty.tcp.hostname="$(eval "echo $AKKA_REMOTING_BIND_HOST")"""",
-  """-Dakka.remote.netty.tcp.port="$AKKA_REMOTING_BIND_PORT"""",
-  """$(IFS=','; I=0; for NODE in $AKKA_SEED_NODES; do echo "-Dakka.cluster.seed-nodes.$I=akka.tcp://$AKKA_ACTOR_SYSTEM_NAME@$NODE"; I=$(expr $I + 1); done)""",
-  "-Dakka.io.dns.resolver=async-dns",
-  "-Dakka.io.dns.async-dns.resolve-srv=true",
-  "-Dakka.io.dns.async-dns.resolv-conf=on"
+  """-Dakka.management.http.hostname="$(eval "echo $AKKA_REMOTING_BIND_HOST")""""
 )
 
 dockerCommands :=
