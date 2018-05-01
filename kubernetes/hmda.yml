@@ -54,6 +54,7 @@ spec:
   # and thus the svc ("service") DNS record for the single IP but the IPs of all nodes that we select
   #
   # In other words:
+  #  POD=$(kubectl get pods | grep hmda | grep Running | head -n1 | awk '{ print $1 }')
   #  $ kubectl exec -it $POD -- nslookup hmda-service.default.svc.cluster.local
   #  Server:		10.0.0.10
   #  Address:	10.0.0.10#53
