@@ -1,0 +1,72 @@
+{
+  "apiVersion": "apps/v1beta1",
+  "kind": "StatefulSet",
+  "metadata": {
+    "name": "hmda"
+  },
+  "spec": {
+    "serviceName": "hmda",
+    "replicas": 3,
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "hmda"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "hmda",
+            "image": "jmarin/hmda-platform:latest",
+            "imagePullPolicy": "Always",
+            "ports": [
+              {
+                "containerPort": 2551,
+                "name": "akka-remote"
+              }
+            ],
+            "resources": {
+              "limits": {
+                "cpu": "250m",
+                "memory": "384Mi"
+              },
+              "requests": {
+                "cpu": "250m",
+                "memory": "384Mi"
+              }
+            },
+            "env": [
+              {
+                "name": "AKKA_ACTOR_SYSTEM_NAME",
+                "value": "hmda"
+              },
+              {
+                "name": "AKKA_REMOTING_BIND_PORT",
+                "value": "2551"
+              },
+              {
+                "name": "AKKA_REMOTING_BIND_HOST",
+                "value": "$HOSTNAME.hmda.default.svc.cluster.local"
+              },
+              {
+                "name": "AKKA_SEED_NODES",
+                "value": "hmda-0.hmda.default.svc.cluster.local:2551,hmda-1.hmda.default.svc.cluster.local:2551,hmda-2.hmda.default.svc.cluster.local:2551"
+              },
+              {
+                "name": "HMDA_RUNTIME_MODE",
+                "value": "kubernetes"
+              }
+            ],
+            "readinessProbe": {
+              "tcpSocket": {
+                "port": 2551
+              },
+              "initialDelaySeconds": 30,
+              "timeoutSeconds": 30
+            }
+          }
+        ]
+      }
+    }
+  }
+}

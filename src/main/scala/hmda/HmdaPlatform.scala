@@ -41,6 +41,8 @@ object HmdaPlatform extends App {
     case "dev" => ConfigFactory.parseResources("application-dev.conf").resolve()
     case "dcos" =>
       ConfigFactory.parseResources("application-dcos.conf").resolve()
+    case "kubernetes" =>
+      ConfigFactory.parseResources("application-kubernetes.conf").resolve()
     case _ => config
   }
 
@@ -52,7 +54,7 @@ object HmdaPlatform extends App {
 
   AkkaManagement(system).start()
 
-  if (runtimeMode == "dcos") {
+  if (runtimeMode == "dcos" || runtimeMode == "kubernetes") {
     ClusterBootstrap(system).start()
   }
 
