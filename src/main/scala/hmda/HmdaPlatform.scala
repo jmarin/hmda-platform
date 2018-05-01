@@ -45,8 +45,6 @@ object HmdaPlatform extends App {
     }
     case "dcos" =>
       ConfigFactory.parseResources("application-dcos.conf").resolve()
-    case "kubernetes" =>
-      ConfigFactory.parseResources("application-kubernetes.conf").resolve()
     case _ => config
   }
 

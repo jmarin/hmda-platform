@@ -8,6 +8,7 @@ lazy val akkaDeps = Seq(
   akkaSlf4J,
   akkaCluster,
   akkaTyped,
+  akkaClusterTyped,
   akkaStream,
   akkaManagement,
   akkaManagementClusterBootstrap,
