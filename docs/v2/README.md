@@ -55,6 +55,50 @@ This task will create a `Docker` image. To run a container with the `HMDA Platfo
 
 `docker run --rm -ti -p 8080:8080 -p 8081:8081 -p 8082:8082 -p 19999:19999 hmda/hmda-platform`
 
+### Running in Kubernetes (local)
+
+* To build and run the application in Kubernetes (local development), the following steps must be followed
+
+1. Make sure that [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/) is installed and configured for your system. 
+2. Make sure that [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/) is installed. 
+When properly installed, you should be able to do `minikube dashboard` and see the `kubernetes` cluster dashboard in your browser.
+Make sure that your `kubectl` is properly configured to point to `minikube`
+3. Deploy the application with the Kubernetes descriptor files
+    * First, create the `hmda` service account: 
+    
+    ```bash
+    kubectl create -f kubernetes/hmda-roles.yml
+    ```
+    
+    Check that the service account has been properly created:
+    
+    ```bash
+    kubectl get serviceaccounts
+    ```
+    
+    Make sure that `hmda-service-account` is listed
+    
+    * Second, install the `HMDA Platform` deployment:
+    
+    ```bash
+    kubectl create -f kubernetes/hmda.yml
+    ``` 
+    
+    This deployment is configured with a default of 3 pods. You can check their status as follows:
+    
+    ```bash
+    kubectl get pods
+    ```
+    
+    To check that the API is up and running:
+    
+    ```bash
+    minikube service hmda-api 
+    ```
+    
+    This will open one browser tab per service exposed. The first three should present the status endpoint for the `filing`, `admin` and `publc` APIs, respectively. 
+    
+
 ### Running the application in clustered mode (mesos)
 
 * The script in the [mesos](../../mesos) folder describes the deployment through [Marathon](https://mesosphere.github.io/marathon/) on a DCOS / Mesos cluster.
