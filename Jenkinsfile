@@ -14,12 +14,12 @@ podTemplate(label: 'buildPod', containers: [
         def shortGitCommit = "${gitCommit[0..10]}"
         def previousGitCommit = sh(script: "git rev-parse ${gitCommit}~", returnStdout: true)
 
-        stage('Build HMDA Platform') {
-            container('sbt') {
+       stage('Publish HMDA Platform') {
+            container('docker') {
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
                            usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASSWORD']]) {
                     sh "docker login -u ${env.DOCKER_HUB_USER} -p ${env.DOCKER_HUB_PASSWORD} "
-                    sh "sbt docker:publish"
+                    sh "docker publish ${env.DOCKER_HUB_USER/hmda-platform}"
                 }
             }
         }
