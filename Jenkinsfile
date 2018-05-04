@@ -18,7 +18,7 @@ podTemplate(label: 'buildPod', containers: [
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
                            usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASSWORD']]) {
                     sh "docker login -u ${env.DOCKER_HUB_USER} -p ${env.DOCKER_HUB_PASSWORD} "
-                    sh "docker publish ${env.DOCKER_HUB_USER/hmda-platform}"
+                    sh "docker push ${env.DOCKER_HUB_USER/hmda-platform}"
                 }
             }
         }
