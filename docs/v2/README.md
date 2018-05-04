@@ -55,7 +55,7 @@ This task will create a `Docker` image. To run a container with the `HMDA Platfo
 
 `docker run --rm -ti -p 8080:8080 -p 8081:8081 -p 8082:8082 -p 19999:19999 hmda/hmda-platform`
 
-### Running in Kubernetes (local)
+### CI/CD in Kubernetes (local)
 
 * To build and run the application in Kubernetes (local development), the following steps must be followed
 
@@ -92,9 +92,17 @@ Make sure that your `kubectl` is properly configured to point to `minikube`
     * Install Jenkins
     
     ```bash
-    helm install stable/jenkins
+    helm install --name jenkins -f kubernetes/jenkins-values.yml stable/jenkins
     ```
-
+    
+    You can access `Jenkins` by issuing `minikube service jenkins` and logging in with admin/admin.
+    
+    Follow the on screen instructions to finalize `Jenkins` setup. When logged in, update plugins if necessary. 
+    
+    * Docker Hub Credentials (optional)
+    
+    Add Credentials in Jenkins for Docker Hub so that images can be pushed as part of Jenkins pipeline builds
+ 
 4. Deploy the application with the Kubernetes descriptor files
     * First, create the `hmda` service account: 
     
