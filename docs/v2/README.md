@@ -60,10 +60,42 @@ This task will create a `Docker` image. To run a container with the `HMDA Platfo
 * To build and run the application in Kubernetes (local development), the following steps must be followed
 
 1. Make sure that [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/) is installed and configured for your system. 
+
 2. Make sure that [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/) is installed. 
 When properly installed, you should be able to do `minikube dashboard` and see the `kubernetes` cluster dashboard in your browser.
 Make sure that your `kubectl` is properly configured to point to `minikube`
-3. Deploy the application with the Kubernetes descriptor files
+
+3. Make sure that [Helm](https://helm.sh/) is installed (as well as Tiller, the server side component).
+
+4. Install `Jenkins` Helm Chart
+
+    * First, make sure the `Helm` repo is up to date:
+    
+    ```bash
+    helm repo udpate
+    ```
+    
+    List Helm Charts installed:
+    
+    ```bash
+    helm list
+    ```
+    
+    If the previous command doesn't work, do the following: 
+    
+    ```bash
+    kubectl --namespace=kube-system edit deployment/tiller-deploy
+    ```
+    
+    And change the `automountServiceAccountToken` to `true`
+    
+    * Install Jenkins
+    
+    ```bash
+    helm install stable/jenkins
+    ```
+
+4. Deploy the application with the Kubernetes descriptor files
     * First, create the `hmda` service account: 
     
     ```bash
