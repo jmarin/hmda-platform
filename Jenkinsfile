@@ -16,7 +16,7 @@ podTemplate(label: 'buildPod', containers: [
         stage('Do some docker work') {
             container('docker') {
                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
-               usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+               usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASSWORD']]) {
                    sh """
                         docker pull ubuntu
                         docker tag ubuntu ${env.DOCKER_HUB_USER}/ubuntu:${env.BUILD_NUMBER}
