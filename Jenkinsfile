@@ -15,20 +15,10 @@ podTemplate(label: 'buildPod', containers: [
 
         stage('Do some docker work') {
             container('docker') {
-                 withCredentials([[$class: 'UsernamePasswordMultiBinding',
-                    creadentialsId: 'dockerhub',
-                    usernameVariable: 'DOCKER_HUB_USER',
-                    passwordVariable: 'DOCKER_HUB_PASSWORD']]) {
-
-                        sh """
-                        docker pull ubuntu
-                        docker tag ubuntu ${env.DOCKER_HUB_USER}/ubuntu:${env.BUILD_NUMBER}
-                        """
-
-                        sh "docker login -u ${env.DOCKER_HUB_USER} -p ${env.DOCKER_HUB_PASSWORD}"
-                        sh "docker push ${env.DOCKER_HUB_USER}/ubuntu:${env.BUILD_NUMBER}"
-
-                    }
+               withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',
+               usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                   sh 'echo uname=$USERNAME pwd=$PASSWORD'
+                }
             }
         }
     }
