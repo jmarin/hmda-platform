@@ -4,6 +4,7 @@ package hmda.proto;
 
 service CheckDigitService {
     rpc checkDigit (CheckDigitRequest) returns (CheckDigitResponse);
+    rpc checkDigitStream (stream CheckDigitRequest) returns (stream CheckDigitResponse);
     rpc uliValidate (ValidateULIRequest) returns (ValidateULIResponse);
 }
 

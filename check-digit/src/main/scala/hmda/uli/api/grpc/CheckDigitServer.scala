@@ -5,6 +5,7 @@ import hmda.gprc.GrpcServer
 import hmda.proto.uli._
 import hmda.uli.validation.ULI
 import io.grpc.Status
+import io.grpc.stub.StreamObserver
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
@@ -44,6 +45,41 @@ object CheckDigitServer extends GrpcServer {
               .augmentDescription(error.getLocalizedMessage)
               .asRuntimeException()
           )
+      }
+    }
+
+    override def checkDigitStream(
+        responseObserver: StreamObserver[CheckDigitResponse])
+      : StreamObserver[CheckDigitRequest] = {
+      new StreamObserver[CheckDigitRequest] {
+
+        var loanId: String = ""
+        var digit: String = ""
+        var checkDigit: String = ""
+
+        override def onNext(value: CheckDigitRequest): Unit = {
+          loanId = value.loanId
+          println(s"checking: ${loanId}")
+          val maybeCheckDigit = Try(ULI.checkDigit(loanId))
+          maybeCheckDigit match {
+            case Success(d) =>
+              digit = d
+              checkDigit = loanId + digit
+              responseObserver.onNext(
+                CheckDigitResponse(
+                  Some(ULIResponse(loanId, digit, checkDigit))))
+            case Failure(_) =>
+          }
+        }
+
+        override def onCompleted(): Unit = {
+          responseObserver.onCompleted()
+        }
+
+        override def onError(t: Throwable): Unit = {
+          println(s"${t.getLocalizedMessage}")
+        }
+
       }
     }
   }
