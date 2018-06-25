@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package hmda.proto.uli;
+
+service CheckDigitService {
+    rpc checkDigit (CheckDigitRequest) returns (CheckDigitResponse);
+    rpc uliValidate (ValidateULIRequest) returns (ValidateULIResponse);
+}
+
+message CheckDigitRequest {
+    string loanId = 1;
+}
+
+message CheckDigitResponse {
+    string loanId = 1;
+    int32 checkDigit = 2;
+    string uli = 3;
+}
+
+message ValidateULIRequest {
+    string uli = 1;
+}
+
+message ValidateULIResponse {
+    bool isValid = 1;
+}

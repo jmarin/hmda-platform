@@ -28,6 +28,11 @@ lazy val akkaPersistenceDeps =
 lazy val akkaHttpDeps = Seq(akkaHttp, akkaHttpTestkit, akkaHttpCirce)
 lazy val circeDeps = Seq(circe, circeGeneric, circeParser)
 
+lazy val gRPCDeps = Seq(
+  "io.grpc" % "grpc-netty" % scalapb.compiler.Version.grpcJavaVersion,
+  "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion
+)
+
 lazy val scalafmtSettings = Seq(
   scalafmtOnCompile in ThisBuild := true,
   scalafmtTestOnCompile in ThisBuild := true
@@ -64,7 +69,7 @@ lazy val `common-api` = (project in file("common-api"))
   .settings(hmdaBuildSettings: _*)
   .settings(
     Seq(
-      libraryDependencies ++= commonDeps ++ akkaDeps ++ akkaHttpDeps ++ circeDeps
+      libraryDependencies ++= commonDeps ++ akkaDeps ++ akkaHttpDeps ++ circeDeps ++ gRPCDeps
     )
   )
 
@@ -99,6 +104,9 @@ lazy val `check-digit` = (project in file("check-digit"))
   .settings(hmdaBuildSettings: _*)
   .settings(
     Seq(
+      PB.targets in Compile := Seq(
+        scalapb.gen() -> (sourceManaged in Compile).value
+      ),
       assemblyJarName in assembly := {
         s"${name.value}.jar"
       }
