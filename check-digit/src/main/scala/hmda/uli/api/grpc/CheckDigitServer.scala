@@ -32,7 +32,20 @@ object CheckDigitServer extends GrpcServer {
     }
 
     override def uliValidate(
-        request: ValidateULIRequest): Future[ValidateULIResponse] = ???
+        request: ValidateULIRequest): Future[ValidateULIResponse] = {
+      val maybeIsValid = Try(ULI.validateULI(request.uli))
+      maybeIsValid match {
+        case Success(isValid) =>
+          val response = ValidateULIResponse(isValid)
+          Future.successful(response)
+        case Failure(error) =>
+          Future.failed(
+            Status.INTERNAL
+              .augmentDescription(error.getLocalizedMessage)
+              .asRuntimeException()
+          )
+      }
+    }
   }
 
   def main(args: Array[String]): Unit = {
