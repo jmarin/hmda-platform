@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package hmda.proto.uli;
+package hmda.proto;
 
 service CheckDigitService {
     rpc checkDigit (CheckDigitRequest) returns (CheckDigitResponse);
@@ -12,8 +12,12 @@ message CheckDigitRequest {
 }
 
 message CheckDigitResponse {
+    ULIResponse uli = 1;
+}
+
+message ULIResponse {
     string loanId = 1;
-    int32 checkDigit = 2;
+    string checkDigit = 2;
     string uli = 3;
 }
 

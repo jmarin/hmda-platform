@@ -2,6 +2,7 @@ package hmda.uli
 
 import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
+import hmda.uli.api.grpc.CheckDigitServer
 import hmda.uli.api.http.HmdaUliApi
 import org.slf4j.LoggerFactory
 
@@ -26,4 +27,7 @@ object HmdaUli extends App {
   implicit val system = ActorSystem("hmda-uli")
 
   system.actorOf(HmdaUliApi.props(), "hmda-uli-api")
+
+  //Start gRPC API
+  CheckDigitServer.main(Array.empty[String])
 }
