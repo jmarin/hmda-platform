@@ -1,5 +1,5 @@
-packageName in Docker := "hmda-check-digit"
+packageName in Docker := "check-digit"
 
-dockerExposedPorts := Vector(9091)
+dockerExposedPorts := Vector(9091, 5000)
 
 version in Docker := "latest"

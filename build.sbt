@@ -1,7 +1,6 @@
 import Dependencies._
 import BuildSettings._
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
-import sbt.librarymanagement.Resolver
 
 lazy val commonDeps = Seq(logback, scalaTest, scalaCheck)
 lazy val akkaDeps = Seq(
@@ -107,8 +106,16 @@ lazy val `check-digit` = (project in file("check-digit"))
       PB.targets in Compile := Seq(
         scalapb.gen() -> (sourceManaged in Compile).value
       ),
+      mainClass in Compile := Some("hmda.uli.HmdaUli"),
       assemblyJarName in assembly := {
         s"${name.value}.jar"
+      },
+      assemblyMergeStrategy in assembly := {
+        case "application.conf"                      => MergeStrategy.concat
+        case "META-INF/io.netty.versions.properties" => MergeStrategy.concat
+        case x =>
+          val oldStrategy = (assemblyMergeStrategy in assembly).value
+          oldStrategy(x)
       }
     ),
     scalafmtSettings,
