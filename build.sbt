@@ -62,7 +62,7 @@ lazy val packageSettings = Seq(
 
 lazy val `hmda-root` = (project in file("."))
   .settings(hmdaBuildSettings: _*)
-  .aggregate(`common-api`, `hmda-platform`, `check-digit`)
+  .aggregate(`common-api`, `hmda-platform`, `check-digit`, protobuf)
 
 lazy val `common-api` = (project in file("common-api"))
   .settings(hmdaBuildSettings: _*)
@@ -103,9 +103,6 @@ lazy val `check-digit` = (project in file("check-digit"))
   .settings(hmdaBuildSettings: _*)
   .settings(
     Seq(
-      PB.targets in Compile := Seq(
-        scalapb.gen() -> (sourceManaged in Compile).value
-      ),
       mainClass in Compile := Some("hmda.uli.HmdaUli"),
       assemblyJarName in assembly := {
         s"${name.value}.jar"
@@ -123,3 +120,15 @@ lazy val `check-digit` = (project in file("check-digit"))
     packageSettings
   )
   .dependsOn(`common-api` % "compile->compile;test->test")
+  .dependsOn(protobuf % "compile->compile;test->test")
+
+lazy val protobuf = (project in file("protobuf"))
+  .settings(hmdaBuildSettings: _*)
+  .settings(
+    Seq(
+      PB.targets in Compile := Seq(
+        scalapb.gen() -> (sourceManaged in Compile).value
+      ),
+      libraryDependencies ++= gRPCDeps
+    )
+  )
