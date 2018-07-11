@@ -12,11 +12,12 @@ replicaCount: 3
 image:
   repository: jmarin/hmda-platform
   tag: 2.0.1
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 hmda:
   actorSystemName: hmda2
   runtimeMode: kubernetes
+  cassandra: node-0-server.cassandra.mesos.
 
 service:
   type: NodePort

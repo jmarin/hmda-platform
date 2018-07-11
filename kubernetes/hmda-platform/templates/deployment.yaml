@@ -25,6 +25,8 @@ spec:
         env:
         - name: HMDA_RUNTIME_MODE
           value: {{ .Values.hmda.runtimeMode }}
+        - name: CASSANDRA_CLUSTER_HOSTS
+          value: {{ .Values.hmda.cassandra }}
         - name: HOST_NAME
           valueFrom:
             fieldRef:
