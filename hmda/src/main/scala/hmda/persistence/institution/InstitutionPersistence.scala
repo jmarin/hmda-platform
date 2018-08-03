@@ -5,15 +5,16 @@ import akka.cluster.sharding.typed.scaladsl.EntityTypeKey
 import akka.persistence.typed.scaladsl.{Effect, PersistentBehaviors}
 import akka.persistence.typed.scaladsl.PersistentBehaviors.CommandHandler
 import com.typesafe.config.ConfigFactory
+import hmda.messages.CommonMessages.{Command, Event}
 import hmda.model.institution.Institution
 
 object InstitutionPersistence {
 
   final val name = "Institution"
 
-  sealed trait InstitutionCommand
+  sealed trait InstitutionCommand extends Command
 
-  sealed trait InstitutionEvent
+  sealed trait InstitutionEvent extends Event
 
   case class CreateInstitution(i: Institution,
                                replyTo: ActorRef[InstitutionCreated])

@@ -26,6 +26,7 @@ lazy val akkaPersistenceDeps =
       akkaClusterSharding,
       akkaPersistenceTyped,
       akkaClusterShardingTyped,
+      akkaPersistenceQuery,
       akkaPersistenceCassandra,
       cassandraLauncher)
 
@@ -70,7 +71,7 @@ lazy val `common-api` = (project in file("common-api"))
   .settings(hmdaBuildSettings: _*)
   .settings(
     Seq(
-      libraryDependencies ++= commonDeps ++ akkaDeps ++ akkaHttpDeps ++ circeDeps ++ slickDeps
+      libraryDependencies ++= commonDeps ++ akkaDeps ++ akkaPersistenceDeps ++ akkaHttpDeps ++ circeDeps ++ slickDeps
     )
   )
 
