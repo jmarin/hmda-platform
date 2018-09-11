@@ -34,6 +34,8 @@ lazy val circeDeps = Seq(circe, circeGeneric, circeParser)
 
 lazy val slickDeps = Seq(slick, slickHikaryCP, postgres, h2)
 
+lazy val slickPostgisDeps = slickDeps ++ Seq(slickPG, slickPGGeom)
+
 lazy val scalafmtSettings = Seq(
   scalafmtOnCompile in ThisBuild := true,
   scalafmtTestOnCompile in ThisBuild := true
@@ -143,6 +145,32 @@ lazy val `institutions-api` = (project in file("institutions-api"))
       assemblyJarName in assembly := {
         s"${name.value}.jar"
       }
+    ),
+    scalafmtSettings,
+    dockerSettings,
+    packageSettings
+  )
+  .dependsOn(common % "compile->compile;test->test")
+
+lazy val `geo` = (project in file("geo"))
+  .enablePlugins(JavaServerAppPackaging,
+                 sbtdocker.DockerPlugin,
+                 AshScriptPlugin)
+  .settings(hmdaBuildSettings: _*)
+  .settings(
+    Seq(
+      mainClass in Compile := Some("hmda.geo.HmdaGeo"),
+      assemblyMergeStrategy in assembly := {
+        case "application.conf"                      => MergeStrategy.concat
+        case "META-INF/io.netty.versions.properties" => MergeStrategy.concat
+        case x =>
+          val oldStrategy = (assemblyMergeStrategy in assembly).value
+          oldStrategy(x)
+      },
+      assemblyJarName in assembly := {
+        s"${name.value}.jar"
+      },
+      libraryDependencies ++= slickPostgisDeps
     ),
     scalafmtSettings,
     dockerSettings,

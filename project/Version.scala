@@ -14,4 +14,5 @@ object Version {
   val slick = "3.2.3"
   val postgres = "42.2.4"
   val h2 = "1.4.188"
+  val slickPG = "0.16.3"
 }
