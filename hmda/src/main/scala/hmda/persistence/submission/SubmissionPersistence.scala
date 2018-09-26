@@ -2,6 +2,7 @@ package hmda.persistence.submission
 
 import java.time.Instant
 
+import akka.cluster.sharding.typed.scaladsl.ClusterSharding
 import akka.persistence.typed.scaladsl.PersistentBehaviors.CommandHandler
 import akka.persistence.typed.scaladsl.{Effect, PersistentBehaviors}
 import hmda.messages.submission.SubmissionCommands.{
@@ -16,6 +17,7 @@ import hmda.messages.submission.SubmissionEvents.{
   SubmissionModified,
   SubmissionNotExists
 }
+import hmda.messages.submission.SubmissionStatsCommands.AddSubmission
 import hmda.model.filing.submission.{Created, Submission, SubmissionId}
 
 object SubmissionPersistence {
@@ -27,7 +29,7 @@ object SubmissionPersistence {
   def behavior(submissionId: SubmissionId) =
     PersistentBehaviors
       .receive[SubmissionCommand, SubmissionEvent, SubmissionState](
-        persistenceId = submissionId.toString,
+        persistenceId = s"$name-${submissionId.toString}",
         emptyState = SubmissionState(None),
         commandHandler = commandHandler,
         eventHandler = eventHandler
@@ -38,6 +40,7 @@ object SubmissionPersistence {
   val commandHandler
     : CommandHandler[SubmissionCommand, SubmissionEvent, SubmissionState] = {
     (ctx, state, cmd) =>
+      val sharding = ClusterSharding(ctx.system)
       cmd match {
         case GetSubmission(replyTo) =>
           replyTo ! state.submission
@@ -48,9 +51,14 @@ object SubmissionPersistence {
             Created,
             Instant.now().toEpochMilli
           )
+          val submissionStatsPersistence = sharding.entityRefFor(
+            SubmissionStatsPersistence.ShardingTypeName,
+            s"${SubmissionStatsPersistence.name}-${submissionId.lei}-${submissionId.period}"
+          )
           Effect.persist(SubmissionCreated(submission)).thenRun { _ =>
             ctx.log.debug(
               s"persisted new Submission: ${submission.id.toString}")
+            submissionStatsPersistence ! AddSubmission(submission.id)
             replyTo ! SubmissionCreated(submission)
           }
         case ModifySubmission(submission, replyTo) =>
@@ -75,6 +83,7 @@ object SubmissionPersistence {
       } else {
         state
       }
+    case (state, SubmissionNotExists(_)) => state
   }
 
 }

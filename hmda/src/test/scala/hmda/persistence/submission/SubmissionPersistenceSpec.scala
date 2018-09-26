@@ -15,12 +15,7 @@ import hmda.messages.submission.SubmissionEvents.{
   SubmissionModified,
   SubmissionNotExists
 }
-import hmda.model.filing.submission.{
-  Created,
-  Submission,
-  SubmissionId,
-  Uploaded
-}
+import hmda.model.filing.submission._
 import hmda.model.submission.SubmissionGenerator._
 
 import scala.concurrent.duration._
@@ -42,6 +37,18 @@ class SubmissionPersistenceSpec extends AkkaCassandraPersistenceSpec {
   val modified = sampleSubmission.copy(status = Uploaded)
 
   val submissionId = sampleSubmission.id
+
+  val filingId = FilingId(submissionId.lei, submissionId.period)
+
+//  val submissionStatsPersistence = system.spawn(
+//    SubmissionStatsPersistence.behavior(s"${submissionId.lei}`${submissionId.period}"),
+//    actorName)
+
+  val submissionStatsPersistence =
+    SubmissionStatsPersistence.startSubmissionStatsSharding(
+      typedSystem,
+      filingId
+    )
 
   "A Submission" must {
     "be created and read back" in {
