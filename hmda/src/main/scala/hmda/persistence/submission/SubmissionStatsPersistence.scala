@@ -68,7 +68,6 @@ object SubmissionStatsPersistence {
             Effect.none
           } else {
             Effect.persist(SubmissionAdded(submissionId)).thenRun { _ =>
-              println(submissionId)
               ctx.log.debug(s"Add submission: $submissionId")
             }
           }
