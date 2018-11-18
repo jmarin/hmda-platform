@@ -109,6 +109,7 @@ lazy val `hmda-platform` = (project in file("hmda"))
       cinnamon in test := true,
       cinnamonLogLevel := "INFO",
       libraryDependencies ++= Seq(
+        Cinnamon.library.cinnamonCHMetrics,
         Cinnamon.library.cinnamonAkka,
         Cinnamon.library.cinnamonAkkaStream,
         Cinnamon.library.cinnamonAkkaHttp,
