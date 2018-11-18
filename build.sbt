@@ -91,7 +91,8 @@ lazy val common = (project in file("common"))
 lazy val `hmda-platform` = (project in file("hmda"))
   .enablePlugins(JavaServerAppPackaging,
                  sbtdocker.DockerPlugin,
-                 AshScriptPlugin)
+                 AshScriptPlugin,
+                 Cinnamon)
   .settings(hmdaBuildSettings: _*)
   .settings(
     Seq(
@@ -103,7 +104,16 @@ lazy val `hmda-platform` = (project in file("hmda"))
         case x =>
           val oldStrategy = (assemblyMergeStrategy in assembly).value
           oldStrategy(x)
-      }
+      },
+      cinnamon in run := true,
+      cinnamon in test := true,
+      cinnamonLogLevel := "INFO",
+      libraryDependencies ++= Seq(
+        Cinnamon.library.cinnamonAkka,
+        Cinnamon.library.cinnamonAkkaStream,
+        Cinnamon.library.cinnamonAkkaHttp,
+        Cinnamon.library.cinnamonCHMetricsElasticsearchReporter
+      )
     ),
     scalafmtSettings,
     dockerSettings,
