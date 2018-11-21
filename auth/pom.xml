@@ -14,11 +14,11 @@
     <artifactId>keycloak-authenticator-hmda</artifactId>
 
     <properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
         <junit.jupiter.version>5.3.1</junit.jupiter.version>
         <junit.platform.version>1.3.1</junit.platform.version>
     </properties>
-
-
 
    <build>
        <plugins>
