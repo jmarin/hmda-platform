@@ -40,6 +40,8 @@ class OAuth2Authorization(logger: LoggingAdapter,
           if (leiList.contains(lei)) {
             provide(t)
           } else {
+            logger.error(
+              s"Not authorized to access resources for institution with LEI: $lei")
             reject(AuthorizationFailedRejection)
               .toDirective[Tuple1[VerifiedToken]]
           }
@@ -49,6 +51,7 @@ class OAuth2Authorization(logger: LoggingAdapter,
         if (runtimeMode == "dev") {
           provide(VerifiedToken())
         } else {
+          logger.error(s"Auth server returned empty LEI")
           reject(AuthorizationFailedRejection)
             .toDirective[Tuple1[VerifiedToken]]
         }
