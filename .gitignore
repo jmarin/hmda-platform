@@ -24,7 +24,6 @@ _site/
 # Logs and databases #
 ######################
 *.log
-*.sql
 *.sqlite
 
 # OS generated files #
@@ -90,3 +89,5 @@ project/plugins/project/
 scalastyle-config.xml
 .idea/
 projectFilesBackup/
+.ensime
+*.iml

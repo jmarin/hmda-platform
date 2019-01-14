@@ -1,0 +1,39 @@
+podTemplate(label: 'buildHelm', containers: [
+    containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.9.8', ttyEnabled: true, command: 'cat'),
+    containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm', ttyEnabled: true, command: 'cat')
+]) {
+    node('buildHelm') {
+        def repo = checkout scm
+        def gitCommit = repo.GIT_COMMIT
+        def gitBranch = repo.GIT_BRANCH
+
+        stage('Ambassador Service') {
+            if (env.BRANCH_NAME == 'master') {
+                container('kubectl') {
+                    sh "kubectl create -f kubernetes/keycloak/keycloak-ambassador.yaml"
+                }
+            }
+        }
+
+        stage('Deploy') {
+            if (env.BRANCH_NAME == 'master') {
+                container('helm') {
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'keycloak-admin',
+                    usernameVariable: 'KEYCLOAK_USER', passwordVariable: 'KEYCLOAK_PASSWORD']]) {
+                        withCredentials([string(credentialsId: 'keycloak-db', variable: 'POSTGRES_HOST')]) {
+                            sh """
+                                helm upgrade --install --force --namespace=default \
+                                --values=kubernetes/keycloak/values.yaml \
+                                --set keycloak.persistence.dbHost=${env.POSTGRES_HOST} \
+                                --set keycloak.username=${env.KEYCLOAK_USER} \
+                                --set keycloak.password=${env.KEYCLOAK_PASSWORD} \
+                                --set image.pullPolicy=Always \
+                                keycloak kubernetes/keycloak
+                            """
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

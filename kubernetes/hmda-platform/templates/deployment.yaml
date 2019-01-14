@@ -1,0 +1,150 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ template "hmda-platform.name" . }}
+  name: {{ template "hmda-platform.fullname" . }}
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: {{ template "hmda-platform.name" . }}
+      release: {{ .Release.Name }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ template "hmda-platform.name" . }}
+        release: {{ .Release.Name }}
+        actorSystemName: {{ .Values.hmda.actorSystemName }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - "hmda-platform"
+            topologyKey: kubernetes.io/hostname
+      volumes:
+        - name: tz-config
+          hostPath:
+            path: /usr/share/zoneinfo/America/New_York
+      serviceAccountName: {{ .Values.service.account.name }}
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        volumeMounts:
+          - name: tz-config
+            mountPath: /etc/localtime
+        resources:
+          limits:
+            memory: "6200Mi"
+            cpu: "4"
+          requests:
+            memory: "6200Mi"
+            cpu: "1"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: HMDA_RUNTIME_MODE
+          value: {{ .Values.hmda.runtimeMode }}
+        - name: KUBERNETES_HMDA_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: HOST_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: CASSANDRA_CLUSTER_HOSTS
+          valueFrom:
+            configMapKeyRef:
+              name: cassandra-configmap
+              key: cassandra-hosts
+        - name: CASSANDRA_CLUSTER_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: cassandra-credentials
+              key: cassandra.username
+        - name: CASSANDRA_CLUSTER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cassandra-credentials
+              key: cassandra.password
+        - name: KEYCLOAK_AUTH_URL
+          valueFrom:
+            configMapKeyRef:
+              name: keycloak-configmap
+              key: auth.url
+        - name: KAFKA_CLUSTER_HOSTS
+          valueFrom:
+            configMapKeyRef:
+              name: kafka-configmap
+              key: kafka.hosts
+        - name: GRPC_CHECK_DIGIT_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: grpc-configmap
+              key: check.digit.host
+        - name: GRPC_CHECK_DIGIT_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: grpc-configmap
+              key: check.digit.port
+        - name: GRPC_CENSUS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: grpc-configmap
+              key: census.host
+        - name: GRPC_CENSUS_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: grpc-configmap
+              key: census.port
+        - name: HTTP_CENSUS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: http-configmap
+              key: census.host
+        - name: HTTP_CENSUS_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: http-configmap
+              key: census.port
+        - name: HTTP_CHECK_DIGIT_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: http-configmap
+              key: check.digit.host
+        - name: HTTP_CHECK_DIGIT_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: http-configmap
+              key: check.digit.port
+#        livenessProbe:
+#          tcpSocket:
+#            port: {{ .Values.bootstrap.port }}
+#        readinessProbe:
+#          httpGet:
+#            path: /ready
+#            port: {{ .Values.bootstrap.name }}
+        ports:
+        # akka remoting
+        - name: {{ .Values.remoting.name }}
+          containerPort: {{ .Values.remoting.port }}
+          protocol: {{ .Values.remoting.protocol }}
+        # akka-management bootstrap
+        - name: {{ .Values.bootstrap.name }}
+          containerPort: {{ .Values.bootstrap.port }}
+          protocol: {{ .Values.bootstrap.protocol }}
+        # external http
+        - name: {{ .Values.cluster.name }}
+          containerPort: {{ .Values.cluster.port }}
+          protocol: {{ .Values.cluster.protocol }}
